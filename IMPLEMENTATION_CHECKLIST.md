@@ -1,6 +1,6 @@
 # SilverGuide - Implementation Checklist
 
-Track your progress as you build the app! Check off items as you complete them.
+Track your progress as you build the app! Check off [✔️] items as you complete them.
 
 ---
 
