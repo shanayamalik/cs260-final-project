@@ -1,0 +1,41 @@
+/* TODO: Global CSS styles
+ *
+ * Define base styles that apply to the entire app:
+ * - CSS reset/normalize
+ * - Box sizing
+ * - Default font family (readable, senior-friendly)
+ * - Base font size (large for accessibility, e.g., 18px or 20px)
+ * - Body background color
+ * - Link styles
+ * - Focus states for accessibility (clear, high-contrast outline)
+ *
+ * Accessibility requirements:
+ * - Minimum font size: 18px
+ * - High contrast ratios (WCAG AA: 4.5:1 for normal text)
+ * - Clear focus indicators
+ * - No pure white backgrounds (use off-white for less glare)
+ *
+ * Example:
+ * * {
+ *   margin: 0;
+ *   padding: 0;
+ *   box-sizing: border-box;
+ * }
+ *
+ * body {
+ *   font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+ *   font-size: 20px;
+ *   line-height: 1.6;
+ *   color: var(--color-text);
+ *   background-color: var(--color-background);
+ * }
+ *
+ * button, a {
+ *   cursor: pointer;
+ * }
+ *
+ * button:focus, a:focus, input:focus {
+ *   outline: 3px solid var(--color-focus);
+ *   outline-offset: 2px;
+ * }
+ */
