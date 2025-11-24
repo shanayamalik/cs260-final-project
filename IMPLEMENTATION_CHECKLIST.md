@@ -1,12 +1,12 @@
 # SilverGuide - Implementation Checklist
 
-Track your progress as you build the app! Check off [✔️] items as you complete them.
+Track your progress as you build the app! Check off items as you complete them.
 
 ---
 
 ## Phase 1: Foundation (Days 1-2) - MUST DO FIRST
 
-### Person 1: Project Setup & Routing
+### Project Setup & Routing
 - [x] Run `npm install` to install all dependencies
 - [x] Create `.env` file from `server/.env.example`
 - [x] Implement basic routing in `src/App.jsx`
@@ -16,7 +16,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 - [x] Test navigation between pages (pages can be empty for now)
 - [x] Verify app runs with `npm run dev`
 
-### Person 2: Design System & Common Components
+### Design System & Common Components
 - [ ] Implement `src/styles/variables.css`
   - [ ] Define color palette (primary, secondary, text, background, focus)
   - [ ] Define font sizes (base: 20px, large, xlarge, heading)
@@ -39,7 +39,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
   - [ ] Navigation buttons with icons
   - [ ] Responsive layout
 
-### Person 3: Mock Data & Utilities
+### Mock Data & Utilities
 - [ ] Populate `src/data/mockVolunteers.js`
   - [ ] Create 15-20 diverse volunteer objects
   - [ ] Include: id, name, photo, age, location, interests, communicationStyle, bio, verified, availability
@@ -62,7 +62,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 
 ## Phase 2: Easy Task + Authentication (Days 3-4)
 
-### Person 1: Easy Task - PreferencesPage
+### Easy Task - PreferencesPage
 - [ ] Implement `src/components/HelpTypeTiles.jsx`
   - [ ] Display 3 large tiles: Conversation, Hobby Buddy, Tech Help
   - [ ] Use icons from `public/icons/`
@@ -78,7 +78,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
   - [ ] Navigate to /volunteers on Continue
 - [ ] Test complete Easy Task flow
 
-### Person 2: Authentication & Home
+### Authentication & Home
 - [ ] Implement `src/pages/LoginPage.jsx`
   - [ ] Email and password input fields (large, accessible)
   - [ ] "Log In" button
@@ -94,7 +94,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
   - [ ] Use Header component (no back button)
 - [ ] Test login → home → navigation flow
 
-### Person 3: Backend Setup
+### Backend Setup
 - [x] Implement `server/index.js`
   - [x] Set up Express with cors and body-parser
   - [x] In-memory storage (users array, chats array)
@@ -112,7 +112,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 
 ## Phase 3: Medium Task - VolunteersPage (Days 5-7)
 
-### Person 1: Volunteer Display Components
+### Volunteer Display Components
 - [ ] Implement `src/components/VolunteerCard.jsx`
   - [ ] Props: volunteer, onClick, selected, compact
   - [ ] Display photo, name, interests, verified badge
@@ -126,7 +126,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
   - [ ] "Select" button on each card
 - [ ] Test with mock volunteer data
 
-### Person 2: Scheduling Component
+### Scheduling Component
 - [ ] Implement `src/components/SchedulingCalendar.jsx`
   - [ ] Props: volunteerId, volunteerName, onSchedule, availableSlots
   - [ ] Simple calendar/date picker (week view)
@@ -136,7 +136,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
   - [ ] Visual feedback for selected date/time
 - [ ] Test scheduling flow with mock data
 
-### Person 3: VolunteersPage Integration
+### VolunteersPage Integration
 - [ ] Implement `src/pages/VolunteersPage.jsx`
   - [ ] Load preferences from localStorage
   - [ ] Filter volunteers using matching algorithm
@@ -154,7 +154,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 
 ## Phase 4: Difficult Task - AI Voice Interview (Days 8-10)
 
-### Person 1: Voice Recognition Core
+### Voice Recognition Core
 - [ ] Implement `src/components/VoiceInterview.jsx` (main component)
   - [ ] Large microphone button (use microphone.svg)
   - [ ] Integrate Web Speech API (SpeechRecognition)
@@ -165,7 +165,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 - [ ] Test voice recording and transcription
 - [ ] Handle browser compatibility (webkit prefix)
 
-### Person 2: Live Display Components
+### Live Display Components
 - [ ] Implement `src/components/LiveTranscription.jsx`
   - [ ] Props: transcript (array), isListening
   - [ ] Display real-time speech-to-text
@@ -180,7 +180,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
   - [ ] Color-code by category
 - [ ] Test live updates and animations
 
-### Person 3: AI Integration & Error Handling
+### AI Integration & Error Handling
 - [ ] Implement `src/components/ErrorRecovery.jsx`
   - [ ] Props: errorType, originalText, suggestions, onCorrect, onSkip
   - [ ] "Did you mean...?" interface
@@ -196,7 +196,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 - [ ] Add backend endpoint: PUT /api/users/:id/interests
 - [ ] Test AI conversation flow
 
-### All Together: Integration & Testing
+### Integration & Testing
 - [ ] Integrate all voice components in VoiceInterviewPage
 - [ ] Implement `src/pages/VoiceInterviewPage.jsx`
   - [ ] Use VoiceInterview component
@@ -217,7 +217,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 
 ## Phase 5: Dashboard & Polish (Days 11-12)
 
-### Person 1: Dashboard
+### Dashboard
 - [ ] Implement `src/pages/DashboardPage.jsx`
   - [ ] Load scheduled chats from backend/localStorage
   - [ ] Display upcoming chats with volunteer name, date, time
@@ -228,7 +228,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 - [ ] Test dashboard with mock scheduled chats
 - [ ] Add navigation from all tasks to dashboard
 
-### Person 2: Accessibility Features
+### Accessibility Features
 - [ ] Add text size controls (A / A+)
   - [ ] Toggle buttons to increase/decrease font size
   - [ ] Save preference to localStorage
@@ -243,7 +243,7 @@ Track your progress as you build the app! Check off [✔️] items as you comple
   - [ ] Test with screen reader (VoiceOver/NVDA)
   - [ ] Verify color contrast ratios (WCAG AA)
 
-### Person 3: Error States & Edge Cases
+### Error States & Edge Cases
 - [ ] Add loading states
   - [ ] Spinner/skeleton screens for data fetching
   - [ ] Loading indicator during API calls
@@ -334,30 +334,3 @@ Track your progress as you build the app! Check off [✔️] items as you comple
 
 **Bugs to Fix:**
 <!-- Track bugs here as you find them -->
-
----
-
-## Team Assignments
-
-**Person 1:**
-- Phase 1: Project Setup & Routing
-- Phase 2: Easy Task
-- Phase 3: Volunteer Display
-- Phase 4: Voice Recognition
-- Phase 5: Dashboard
-
-**Person 2:**
-- Phase 1: Design System & Common Components
-- Phase 2: Authentication & Home
-- Phase 3: Scheduling
-- Phase 4: Live Display
-- Phase 5: Accessibility
-
-**Person 3:**
-- Phase 1: Mock Data & Utilities
-- Phase 2: Backend Setup
-- Phase 3: Integration
-- Phase 4: AI Integration
-- Phase 5: Error Handling
-
-**Adjust assignments as needed based on individual strengths and availability!**
