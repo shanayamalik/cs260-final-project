@@ -6,13 +6,13 @@
   --color-primary-hover: #A2D2FF;
   --color-primary-light: #F0F8FF;
 
-  /* Secondary: Cotton Candy */
-  --color-secondary: #FFD1DC;
-  --color-secondary-hover: #FFB7C5;
-  --color-secondary-light: #FFF0F5;
+  /* Secondary: Soft Lilac (Replaced Pink) */
+  --color-secondary: #DCD0FF;
+  --color-secondary-hover: #C4B5FD;
+  --color-secondary-light: #F3F0FF;
 
-  /* Accent: Soft Lilac */
-  --color-accent: #DCD0FF;
+  /* Accent: Cotton Candy (Moved from Secondary) */
+  --color-accent: #FFD1DC;
 
   /* Feedback */
   --color-success: #B5EAD7;    /* Mint Green */

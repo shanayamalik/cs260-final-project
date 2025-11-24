@@ -16,7 +16,7 @@ Track your progress as you build the app! Check off items as you complete them.
 - [x] Test navigation between pages (pages can be empty for now)
 - [x] Verify app runs with `npm run dev`
 
-### Person 2: Design System & Common Components
+### Design System & Common Components
 - [x] Implement `src/styles/variables.css`
   - [x] Define color palette (primary, secondary, text, background, focus)
   - [x] Define font sizes (base: 20px, large, xlarge, heading)
