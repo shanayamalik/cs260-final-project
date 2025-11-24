@@ -1,72 +1,80 @@
-/* TODO: CSS Variables (Design Tokens)
- *
- * Define reusable CSS custom properties for:
- * - Colors (primary, secondary, text, background, etc.)
- * - Font sizes (base, headings, labels)
- * - Spacing (margins, padding, gaps)
- * - Border radius
- * - Shadows
- * - Transitions
- * - Breakpoints (for responsive design)
- *
- * Senior-friendly color palette:
- * - High contrast between text and background
- * - Avoid pure black on white (use #333 on #F8F8F8)
- * - Use warm, calming colors for primary actions
- * - Clear distinction between interactive and static elements
- *
- * Example:
- * :root {
- *   /* Colors */
- /*   --color-primary: #4A90E2;
- *   --color-primary-hover: #357ABD;
- *   --color-secondary: #7ED321;
- *   --color-text: #333333;
- *   --color-text-light: #666666;
- *   --color-background: #F8F8F8;
- *   --color-white: #FFFFFF;
- *   --color-focus: #FF6B35;
- *   --color-error: #D0021B;
- *   --color-success: #7ED321;
- *
- *   /* Font Sizes */
-/*   --font-size-base: 20px;
- *   --font-size-large: 24px;
- *   --font-size-xlarge: 28px;
- *   --font-size-heading: 32px;
- *   --font-size-small: 16px;
- *
- *   /* Spacing */
-/*   --spacing-xs: 8px;
- *   --spacing-sm: 16px;
- *   --spacing-md: 24px;
- *   --spacing-lg: 32px;
- *   --spacing-xl: 48px;
- *
- *   /* Border Radius */
-/*   --radius-sm: 4px;
- *   --radius-md: 8px;
- *   --radius-lg: 12px;
- *
- *   /* Shadows */
-/*   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
- *   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
- *   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
- *
- *   /* Transitions */
-/*   --transition-fast: 150ms ease;
- *   --transition-normal: 300ms ease;
- *
- *   /* Breakpoints (for media queries) */
-/*   --breakpoint-mobile: 480px;
- *   --breakpoint-tablet: 768px;
- *   --breakpoint-desktop: 1024px;
- * }
- *
- * /* High Contrast Mode (optional toggle) */
-/* [data-theme="high-contrast"] {
- *   --color-text: #000000;
- *   --color-background: #FFFFFF;
- *   --color-primary: #0000FF;
- * }
- */
+:root {
+  /* --- Colors: Selected Baby Pastels --- */
+  
+  /* Primary: Baby Blue */
+  --color-primary: #BDE0FE; 
+  --color-primary-hover: #A2D2FF;
+  --color-primary-light: #F0F8FF;
+
+  /* Secondary: Cotton Candy */
+  --color-secondary: #FFD1DC;
+  --color-secondary-hover: #FFB7C5;
+  --color-secondary-light: #FFF0F5;
+
+  /* Accent: Soft Lilac */
+  --color-accent: #DCD0FF;
+
+  /* Feedback */
+  --color-success: #B5EAD7;    /* Mint Green */
+  --color-error: #FFB7B2;      /* Pastel Red */
+  --color-warning: #FFF5BA;    /* Pastel Lemon */
+  --color-focus: #BDE0FE;
+
+  /* Neutrals */
+  --color-background: #FFFCF9; 
+  --color-surface: #FFFFFF;
+  --color-text-main: #000000;  /* Black as requested */
+  --color-text-muted: #444444; /* Darker gray for secondary text */
+  --color-border: #E0E0E0;
+
+  /* --- Typography --- */
+  /* Font: Nunito */
+  --font-family-base: 'Nunito', sans-serif;
+  --font-family-heading: var(--font-family-base);
+
+  /* Sizes: Slightly smaller as requested */
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px; 
+  --font-size-lg: 17px;
+  --font-size-xl: 22px;
+  --font-size-xxl: 28px;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 600;
+  --font-weight-bold: 700;
+
+  /* --- Spacing --- */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* --- Layout --- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.08);
+
+  --container-width: 1200px;
+  --header-height: 64px;
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+}
+
+/* High Contrast Mode (Placeholder for future) */
+[data-theme="high-contrast"] {
+  --color-primary: #0056b3;
+  --color-text-main: #000000;
+  --color-text-muted: #222222;
+  --color-background: #FFFFFF;
+  --color-border: #000000;
+}

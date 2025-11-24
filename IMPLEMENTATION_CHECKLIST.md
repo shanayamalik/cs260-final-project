@@ -16,17 +16,17 @@ Track your progress as you build the app! Check off items as you complete them.
 - [x] Test navigation between pages (pages can be empty for now)
 - [x] Verify app runs with `npm run dev`
 
-### Design System & Common Components
-- [ ] Implement `src/styles/variables.css`
-  - [ ] Define color palette (primary, secondary, text, background, focus)
-  - [ ] Define font sizes (base: 20px, large, xlarge, heading)
-  - [ ] Define spacing values (xs, sm, md, lg, xl)
-  - [ ] Define border radius and shadows
-- [ ] Implement `src/styles/global.css`
-  - [ ] CSS reset and base styles
-  - [ ] Body font family and size
-  - [ ] Focus states for accessibility
-  - [ ] Link styles
+### Person 2: Design System & Common Components
+- [x] Implement `src/styles/variables.css`
+  - [x] Define color palette (primary, secondary, text, background, focus)
+  - [x] Define font sizes (base: 20px, large, xlarge, heading)
+  - [x] Define spacing values (xs, sm, md, lg, xl)
+  - [x] Define border radius and shadows
+- [x] Implement `src/styles/global.css`
+  - [x] CSS reset and base styles
+  - [x] Body font family and size
+  - [x] Focus states for accessibility
+  - [x] Link styles
 - [ ] Build `src/components/common/Button.jsx`
   - [ ] Props: children, onClick, variant, size, disabled, fullWidth
   - [ ] Large, accessible styling (min 44x44px)

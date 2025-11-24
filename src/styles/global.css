@@ -1,41 +1,92 @@
-/* TODO: Global CSS styles
- *
- * Define base styles that apply to the entire app:
- * - CSS reset/normalize
- * - Box sizing
- * - Default font family (readable, senior-friendly)
- * - Base font size (large for accessibility, e.g., 18px or 20px)
- * - Body background color
- * - Link styles
- * - Focus states for accessibility (clear, high-contrast outline)
- *
- * Accessibility requirements:
- * - Minimum font size: 18px
- * - High contrast ratios (WCAG AA: 4.5:1 for normal text)
- * - Clear focus indicators
- * - No pure white backgrounds (use off-white for less glare)
- *
- * Example:
- * * {
- *   margin: 0;
- *   padding: 0;
- *   box-sizing: border-box;
- * }
- *
- * body {
- *   font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
- *   font-size: 20px;
- *   line-height: 1.6;
- *   color: var(--color-text);
- *   background-color: var(--color-background);
- * }
- *
- * button, a {
- *   cursor: pointer;
- * }
- *
- * button:focus, a:focus, input:focus {
- *   outline: 3px solid var(--color-focus);
- *   outline-offset: 2px;
- * }
- */
+/* Import Variables */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+@import './variables.css';
+
+/* --- Reset & Base Styles --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px; /* Browser default, but explicit for rem calcs */
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--color-text-main);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-main);
+}
+
+h1 { font-size: var(--font-size-xxl); }
+h2 { font-size: var(--font-size-xl); }
+h3 { font-size: var(--font-size-lg); }
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* --- Layout Utilities --- */
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* --- Accessibility --- */
+/* Clear focus styles for keyboard navigation */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Form Elements --- */
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
