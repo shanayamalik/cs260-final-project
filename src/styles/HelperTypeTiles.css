@@ -1,44 +1,70 @@
 .help-type-container {
-    display: flex;
-    gap: var(--spacing-lg);
-    justify-content: center;
-    flex-wrap: wrap;
-    padding: var(--spacing-lg);
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+  padding: var(--spacing-lg);
+}
+
+/* Force horizontal layout on wide screens */
+@media (min-width: 768px) {
+  .help-type-container {
+    flex-wrap: nowrap;
   }
-  
-  .help-type-tile {
-    width: 250px;
-    height: 250px;
-    border-radius: var(--radius-lg);
-    border: 2px solid var(--color-border);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-sm);
-    display: flex;
+}
+
+/* Stack vertically on small screens */
+@media (max-width: 767px) {
+  .help-type-container {
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    cursor: pointer;
-    padding: var(--spacing-md);
-    transition: var(--transition-fast);
   }
-  
-  .help-type-tile:hover {
-    border-color: var(--color-primary-hover);
-    background: var(--color-primary-light);
+}
+
+
+/* Each tile */
+.help-type-tile {
+  width: 250px;
+  height: 250px;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: var(--spacing-md);
+  transition: var(--transition-fast);
+}
+
+/* Hover and selected states */
+.help-type-tile:hover {
+  border-color: var(--color-primary-hover);
+  background: var(--color-primary-light);
+}
+
+.help-type-tile.selected {
+  border: 3px solid var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+/* Icon and label */
+.help-type-icon {
+  margin-bottom: var(--spacing-sm);
+}
+
+.help-type-label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-main);
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 768px) {
+  .help-type-container {
+    flex-direction: column;
+    align-items: center;
   }
-  
-  .help-type-tile.selected {
-    border: 3px solid var(--color-primary);
-    background: var(--color-primary-light);
-  }
-  
-  .help-type-icon {
-    margin-bottom: var(--spacing-sm);
-  }
-  
-  .help-type-label {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-main);
-  }
-  
+}

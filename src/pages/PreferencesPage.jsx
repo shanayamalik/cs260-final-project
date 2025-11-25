@@ -54,7 +54,79 @@
 //     </div>
 //   );
 // }
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Header from "../components/common/Header";
+import HelpTypeTiles from "../components/HelpTypeTiles";
+import PreferenceSelector from "../components/PreferenceSelector";
+import Button from "../components/common/Button";
+import "../styles/PreferencesPage.css";
 
 export default function PreferencesPage() {
-  return null;
+  const [helpType, setHelpType] = useState("");
+  const [preferences, setPreferences] = useState({});
+  const navigate = useNavigate();
+
+  const handleSave = async () => {
+    const data = { helpType, ...preferences };
+    localStorage.setItem("preferences", JSON.stringify(data));
+
+    try {
+      await fetch(`/api/users/123/preferences`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+    } catch (err) {
+      console.error("Failed to save preferences:", err);
+    }
+
+    navigate("/volunteers");
+  };
+
+  const handleBackToTiles = () => {
+    setHelpType("");
+  };
+
+  return (
+    <div className="preferences-page">
+      <Header title="Preferences" showBack showHome />
+
+      {!helpType ? (
+        <div className="step-one">
+          <div className="intro-text">
+            <h1>What are you looking for today?</h1>
+            <p>Please pick one of the options below to continue.</p>
+          </div>
+          <div className="tiles-row">
+            <HelpTypeTiles onSelect={setHelpType} selectedType={helpType} />
+          </div>
+        </div>
+      ) : (
+        <div className="step-two">
+          <div className="back-button-wrapper">
+            <button className="back-button" onClick={handleBackToTiles}>
+              ← Back
+            </button>
+          </div>
+
+          <div className="intro-text">
+            <h2>Set your preferences</h2>
+            <p>Adjust the sliders below to match your style.</p>
+          </div>
+
+          <div className="sliders-wrapper">
+            <PreferenceSelector
+              onPreferencesChange={setPreferences}
+              initialPreferences={preferences}
+            />
+          </div>
+
+          <div className="continue-button">
+            <Button onClick={handleSave}>Continue</Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

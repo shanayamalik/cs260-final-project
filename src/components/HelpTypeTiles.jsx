@@ -27,8 +27,8 @@ import {useEffect} from 'react';
 import "../styles/HelperTypeTiles.css"
 
 const TILE_OPTIONS = [
-  { key: "conversational", label:"Conversational", icon: "/icons/conversation.svg"}, 
-  { key: "hobby", label:"Hobby", icon: "/icons/hobby.svg"},
+  { key: "conversational", label:"Someone To Talk To", icon: "/icons/conversation.svg"}, 
+  { key: "hobby", label:"Hobby Buddy", icon: "/icons/hobby.svg"},
   { key: "tech-help", label:"Tech Help", icon: "/icons/tech-help.svg"}
 ]
 export default function HelpTypeTiles({onSelect, selectedType}) {
