@@ -5,6 +5,7 @@ import SignUpPage from './pages/SignUpPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import PreferencesPage from './pages/PreferencesPage';
 import VolunteersPage from './pages/VolunteersPage';
+import DesignPreviewPage from './pages/DesignPreviewPage';
 import './styles/global.css';
 import './App.css';
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/recover-password" element={<ForgotPasswordPage />} />
           <Route path="/preferences" element={<PreferencesPage />} />
           <Route path="/volunteers" element={<VolunteersPage />} />
+          <Route path="/design-preview" element={<DesignPreviewPage />} />
         </Routes>
       </div>
     </BrowserRouter>
