@@ -29,7 +29,71 @@
 //   onPreferencesChange={(prefs) => setPreferences(prefs)}
 //   initialPreferences={savedPreferences}
 // />
+import React, { useState, useEffect } from "react";
+import "../styles/PreferenceSlide.css";
 
-export default function PreferenceSelector() {
-  return null;
+const preferenceOptions = {
+  communicationStyle: ["Listener", "Balanced", "Talkative"],
+  location: ["Nearby", "No Preference", "Online"],
+  agePreference: ["Similar Age", "Any Age"]
+};
+
+export default function PreferenceSelector({ onPreferencesChange, initialPreferences }) {
+  const [preferences, setPreferences] = useState(() => {
+    const saved = localStorage.getItem("preferences");
+    // set teh initial preference
+    return saved ? JSON.parse(saved) : initialPreferences || {
+      communicationStyle: "Balanced",
+      location: "No Preference",
+      agePreference: "Any Age"
+    };
+  });
+
+  // Sync with local storage and parent
+  useEffect(() => {
+    localStorage.setItem("preferences", JSON.stringify(preferences));
+    if (onPreferencesChange) {
+      onPreferencesChange(preferences);
+    }
+  }, [preferences, onPreferencesChange]);
+
+  // update the selected value for a given category
+  const handleChange = (category, value) => {
+    setPreferences((prev) => ({
+      ...prev,
+      [category]: value,
+    }));
+  };
+
+  const formatLabel = (str) =>
+    str.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase());
+  
+  // render the slider
+  const renderSlider = (category, options) => {
+    const currentValue = preferences[category];
+    return (
+      <div className="preference-category">
+        <h3>{formatLabel(category)}</h3>
+        <div className="preference-options">
+          {options.map((option) => (
+            <div key={option} className="preference-option">
+              <button
+                onClick={() => handleChange(category, option)}
+                className={`preference-button ${currentValue === option ? "active" : ""}`}
+              />
+              <div className="preference-label">{option}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="preference-selector">
+      {renderSlider("communicationStyle", preferenceOptions.communicationStyle)}
+      {renderSlider("location", preferenceOptions.location)}
+      {renderSlider("agePreference", preferenceOptions.agePreference)}
+    </div>
+  );
 }
