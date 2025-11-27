@@ -1,0 +1,76 @@
+.step-container {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .tiles-row {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+  }
+  
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    width: 200px;
+    height: 200px;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--color-border);
+    background: var(--color-surface);
+    cursor: pointer;
+    transition: background 0.2s, border 0.2s;
+  }
+  
+  .tile.selected {
+    border: 3px solid var(--color-primary);
+    background: var(--color-primary-light);
+  }
+
+  .tile-icon {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+  }
+  
+  .tile-label {
+    font-weight: 600;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+  }
+  
+  .back-button,
+  .next-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    border: none;
+    cursor: pointer;
+  }
+  
+  .back-button {
+    background: var(--color-border);
+    color: #333;
+  }
+  
+  .next-button {
+    background: var(--color-primary);
+    color: #fff;
+  }
+  
+  .progress {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
+  

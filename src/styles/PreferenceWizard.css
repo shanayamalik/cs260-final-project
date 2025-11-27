@@ -1,0 +1,78 @@
+.wizard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--color-background);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  /* Step container layout */
+  .step-container {
+    width: 100%;
+    max-width: 700px;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  /* Progress indicator */
+  .progress {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
+  
+  /* Navigation buttons */
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    width: 100%;
+  }
+  
+  /* Button styles */
+  .primary-button,
+  .next-button,
+  .back-button,
+  .save-button,
+  .secondary-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: var(--radius-lg);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .primary-button,
+  .next-button,
+  .save-button {
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+  
+  .back-button {
+    background-color: var(--color-border);
+    color: #333;
+  }
+  
+  .secondary-button {
+    background-color: var(--color-primary-light);
+    color: #333;
+  }
+  
+  /* Responsive layout */
+  @media (max-width: 768px) {
+    .wizard-container {
+      padding: 1rem;
+    }
+  
+    .nav-buttons {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+  

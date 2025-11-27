@@ -26,44 +26,39 @@
 import {useEffect} from 'react';
 import "../styles/HelperTypeTiles.css"
 
-const TILE_OPTIONS = [
-  { key: "conversational", label:"Someone To Talk To", icon: "/icons/conversation.svg"}, 
-  { key: "hobby", label:"Hobby Buddy", icon: "/icons/hobby.svg"},
-  { key: "tech-help", label:"Tech Help", icon: "/icons/tech-help.svg"}
-]
+const OPTIONS = [
+  "Someone to Talk To",
+  "Hobby Buddy",
+  "Tech Help"
+];
+
 export default function HelpTypeTiles({onSelect, selectedType}) {
-  // runs only when a tile is selected
-  useEffect(() => {
-    if (selectedType) {
-      // save selection to local storage when the tile is selected
-      localStorage.setItem("helpType", selectedType);
-    }
-  }, [selectedType]);
+  const toggle = (option) => {
+    const newSelected = selected.includes(option)
+      ? selected.filter((o) => o !== option)
+      : [...selected, option];
+    onChange(newSelected);
+  };
 
   return (
-    <div className="help-type-container">
-      {/** Loop through each tile so can create automatically */}
-      {TILE_OPTIONS.map(({ key, label, icon }) => {
-        const isSelected = selectedType === key;
-
-        return (
+    <div className="step-container">
+      <h1>What do you need help with?</h1>
+      <div className="tiles-row">
+        {OPTIONS.map((opt) => (
           <button
-            key={key}
-            onClick={() => onSelect(key)}
-            aria-pressed={isSelected}
-            className={`help-type-tile ${isSelected ? "selected" : ""}`}
+            key={opt}
+            className={`tile ${selected.includes(opt) ? "selected" : ""}`}
+            onClick={() => toggle(opt)}
           >
-            <img
-              src={icon}
-              alt={label}
-              width={64}
-              height={64}
-              className="help-type-icon"
-            />
-            <span className="help-type-label">{label}</span>
+            <span className="tile-label">{opt}</span>
           </button>
-        );
-      })}
+        ))}
+      </div>
+      <div className="nav-buttons">
+        <button className="back-button" onClick={onBack}>Back</button>
+        <button className="next-button" onClick={onNext}>Next</button>
+      </div>
+      <div className="progress">Step 1 of 4</div>
     </div>
   );
 }

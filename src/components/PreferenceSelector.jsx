@@ -32,16 +32,35 @@
 import React, { useState, useEffect } from "react";
 import "../styles/PreferenceSlide.css";
 
-const preferenceOptions = {
-  communicationStyle: ["Listener", "Balanced", "Talkative"],
-  location: ["Nearby", "No Preference", "Online"],
-  agePreference: ["Similar Age", "Any Age"]
-};
+export const preferenceConfig = [
+  {
+    key: "communicationStyle",
+    label: "Communication Style",
+    options: ["Listener", "Balanced", "Talkative"],
+  },
+  {
+    key: "location",
+    label: "Location",
+    options: ["Nearby", "No Preference", "Online"],
+  },
+  {
+    key: "agePreference",
+    label: "Age Preference",
+    options: ["Similar Age", "Any Age"],
+  },
+  {
+    key: "language",
+    label: "Preferred Language",
+    options: ["English", "Spanish", "Mandarin", "Tagalog"],
+  },
+  // Add more preferences here
+];
+
 
 export default function PreferenceSelector({ onPreferencesChange, initialPreferences }) {
   const [preferences, setPreferences] = useState(() => {
     const saved = localStorage.getItem("preferences");
-    // set teh initial preference
+    // set the initial preference
     return saved ? JSON.parse(saved) : initialPreferences || {
       communicationStyle: "Balanced",
       location: "No Preference",
