@@ -2,12 +2,50 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import OpenAI from 'openai';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// In-memory storage (replace with JSON file if needed)
-let users = [];
+// File paths
+const DATA_DIR = path.join(__dirname, 'data');
+const USERS_FILE = path.join(DATA_DIR, 'users.json');
+
+// Ensure data directory exists
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+// Helper to read users
+const readUsers = () => {
+  if (!fs.existsSync(USERS_FILE)) {
+    return [];
+  }
+  try {
+    const data = fs.readFileSync(USERS_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.error('Error reading users file:', err);
+    return [];
+  }
+};
+
+// Helper to write users
+const writeUsers = (users) => {
+  try {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+  } catch (err) {
+    console.error('Error writing users file:', err);
+  }
+};
+
+// Initialize users from file
+let users = readUsers();
 let chats = [];
 
 // Middleware
@@ -57,6 +95,7 @@ app.post('/api/auth/register', (req, res) => {
   };
 
   users.push(newUser);
+  writeUsers(users);
   res.status(201).json({ user: { id: newUser.id, email: newUser.email, name: newUser.name } });
 });
 
@@ -101,6 +140,7 @@ app.post('/api/auth/reset-password', (req, res) => {
   }
 
   user.password = newPassword;
+  writeUsers(users);
   res.json({ message: 'Password updated successfully' });
 });
 

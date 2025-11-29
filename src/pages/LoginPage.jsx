@@ -117,7 +117,7 @@ export default function LoginPage() {
           <div style={{ marginBottom: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
               <label style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>Password</label>
-              <button onClick={() => navigate('/recover-password')} style={{ background: 'none', border: 'none', fontSize: '13px', color: '#0056b3', textDecoration: 'none', cursor: 'pointer', padding: 0 }}>Forgot password?</button>
+              <button type="button" onClick={() => navigate('/recover-password')} style={{ background: 'none', border: 'none', fontSize: '13px', color: '#0056b3', textDecoration: 'none', cursor: 'pointer', padding: 0 }}>Forgot password?</button>
             </div>
             <input 
               type="password" 
