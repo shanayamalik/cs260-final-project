@@ -64,6 +64,9 @@ This document outlines the step-by-step technical implementation for the "Diffic
 ## Phase 5: The "Handover" (Auto-fill Profile)
 **Goal:** seamless transition from interview to profile creation.
 
+*   **TODO:** Review `ProfileAutoFillOptions.jsx` (/profile-autofill-options) to decide on the final design for the auto-filled profile page.
+*   **TODO:** Finalize which fields are mandatory vs. optional (e.g., is "Bio" required if we have "Interests"?).
+
 1.  **State Update:**
     *   Take the JSON data extracted in Phase 4.
     *   Update the global application state (e.g., `UserContext` or pass via React Router `state`).

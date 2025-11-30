@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
 import { jsPDF } from "jspdf";
 
 export default function VoiceInterviewPage() {
+  const navigate = useNavigate();
   /* 
     TODO: undecided between the current Purple/Pastel theme vs. a Blue/Green theme.
     Consider changing the background color to plain 'white' instead of 'var(--color-background)'.
@@ -57,7 +59,6 @@ export default function VoiceInterviewPage() {
         doc.text("Volunteer Profile Summary", 20, 20);
         
         let yPos = 40;
-        const lineHeight = 7;
         const pageWidth = 170; // mm
         
         // Split by lines to parse markdown headers
@@ -106,11 +107,6 @@ export default function VoiceInterviewPage() {
         });
         
         doc.save('interview_summary.pdf');
-        
-        // Small delay to allow the download to start before showing the alert
-        setTimeout(() => {
-          alert("Interview saved! PDF summary downloaded.");
-        }, 500);
       } else if (data.summaryText) {
         // Fallback for plain text prompt
         const doc = new jsPDF();
@@ -120,10 +116,20 @@ export default function VoiceInterviewPage() {
         const splitText = doc.splitTextToSize(data.summaryText, 170);
         doc.text(splitText, 20, 40);
         doc.save('interview_summary.pdf');
-        alert("Interview saved! PDF summary downloaded.");
-      } else {
-        throw new Error(data.message || "No summary returned");
       }
+
+      // Navigate to Profile Creation with the data
+      const analysisData = {
+        summary: data.summaryMarkdown || data.summaryText,
+        interests: data.structuredData?.interests || [],
+        availability: data.structuredData?.availability || ''
+      };
+
+      // Small delay to allow the download to start before navigating
+      setTimeout(() => {
+        navigate('/profile-creation', { state: { analysisData } });
+      }, 1000);
+
     } catch (error) {
       console.error("Analysis failed:", error);
       alert(`Failed to analyze interview: ${error.message}`);
