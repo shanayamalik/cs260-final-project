@@ -53,6 +53,10 @@ export default function VoiceInterviewPage() {
               timestamp: new Date().toISOString(),
               highlights: [] // add extraction logic later
             }]);
+
+            // TODO: (optional?) Text-to-Speech (TTS)
+            // Implement window.speechSynthesis here to read 'data.message' aloud.
+            // Ensure to handle voice selection (friendly tone) and visual sync.
           }
         } catch (error) {
           console.error("Error fetching AI response:", error);

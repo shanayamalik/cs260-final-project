@@ -31,10 +31,12 @@ This document outlines the step-by-step technical implementation for the "Diffic
         *   *Example:* "You are SilverGuide, a friendly volunteer coordinator. Keep responses short (under 2 sentences). Ask one question at a time."
     *   **Response:** The backend returns the AI's text response.
 
-## Phase 3: The "Voice" (Text-to-Speech)
+## Phase 3: The "Voice" (Text-to-Speech) [OPTIONAL / FUTURE TODO]
 **Goal:** Make the AI speak its response back to the user.
 
-1.  **Implementation:**
+*Note: For the current prototype, we are skipping this phase to focus on the core conversation flow and data extraction.*
+
+1.  **Implementation Plan (for later):**
     *   Use the native **Web Speech API** (`window.speechSynthesis`).
     *   Create a function `speak(text)`.
     *   Select a "friendly" voice (look for "Google US English" or similar system voices).
