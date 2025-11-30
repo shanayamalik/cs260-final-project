@@ -71,6 +71,40 @@ app.get('/', (req, res) => {
   res.send('SilverGuide API is running');
 });
 
+// --- AI Chat Route ---
+app.post('/api/chat', async (req, res) => {
+  if (!openai) {
+    return res.status(503).json({ message: 'AI service not configured (missing API key)' });
+  }
+
+  const { messages } = req.body;
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ message: 'Invalid messages format' });
+  }
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo", // or gpt-4 if available/preferred
+      messages: [
+        { 
+          role: "system", 
+          content: "You are SilverGuide, a friendly and empathetic volunteer coordinator for seniors. Your goal is to interview the user to find out their hobbies, skills, and availability. Keep your responses short (1-2 sentences max), warm, and encouraging. Ask one question at a time. Do not be pushy. IMPORTANT: If the user shares personal identifiable information (like home address, phone number, or full financial info), you MUST address this FIRST. Kindly remind them not to share private details with you or potential matches, and reassure them that you do not record or store this information privately. Only after this warning should you briefly acknowledge their other input." 
+        },
+        ...messages
+      ],
+      temperature: 0.7,
+      max_tokens: 150,
+    });
+
+    const aiResponse = completion.choices[0].message.content;
+    res.json({ message: aiResponse });
+
+  } catch (error) {
+    console.error('OpenAI API Error:', error);
+    res.status(500).json({ message: 'Error generating AI response' });
+  }
+});
+
 // Auth Routes
 app.post('/api/auth/register', (req, res) => {
   const { email, password, name, securityQuestion, securityAnswer } = req.body;

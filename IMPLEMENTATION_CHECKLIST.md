@@ -174,6 +174,7 @@ Track your progress as you build the app! Check off items as you complete them.
   - [ ] Hidden background state for profile accumulation
 
 ### Step 2: AI Intelligence & Privacy
+- [ ] **TODO: MINGHUI & CARRIE** - Create your own OpenAI API Key and add it to your local `.env` file (`OPENAI_API_KEY=sk-...`)
 - [ ] Implement `server/services/openai.js`
   - [ ] Conversation Logic: Generate next question based on user input
   - [ ] Extraction Logic: Extract profile data (Interests, Bio, Availability) from transcript

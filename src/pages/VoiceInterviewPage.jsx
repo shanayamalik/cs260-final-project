@@ -3,9 +3,8 @@ import Header from '../components/common/Header';
 
 export default function VoiceInterviewPage() {
   /* 
-    TODO: Finalize Color Scheme & Background
-    - User is undecided between the current Purple/Pastel theme vs. a Blue/Green theme.
-    - Consider changing the background color to plain 'white' instead of 'var(--color-background)'.
+    TODO: undecided between the current Purple/Pastel theme vs. a Blue/Green theme.
+    Consider changing the background color to plain 'white' instead of 'var(--color-background)'.
   */
 
   // Mock state
@@ -14,12 +13,58 @@ export default function VoiceInterviewPage() {
   ]);
   const [interimText, setInterimText] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const endRef = useRef(null);
+  const interimTextRef = useRef('');
+  const silenceTimerRef = useRef(null);
 
   // Auto-scroll
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [transcript, interimText]);
+  }, [transcript, interimText, isProcessing]);
+
+  // --- AI Integration ---
+  useEffect(() => {
+    const lastMessage = transcript[transcript.length - 1];
+    
+    // Only trigger if the last message was from the user and we aren't already thinking
+    if (lastMessage?.speaker === 'user' && !isProcessing) {
+      const fetchAIResponse = async () => {
+        setIsProcessing(true);
+        try {
+          // Convert transcript to OpenAI format
+          const apiMessages = transcript.map(t => ({
+            role: t.speaker === 'user' ? 'user' : 'assistant',
+            content: t.text
+          }));
+
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: apiMessages })
+          });
+
+          const data = await response.json();
+          
+          if (data.message) {
+            setTranscript(prev => [...prev, {
+              text: data.message,
+              speaker: 'ai',
+              timestamp: new Date().toISOString(),
+              highlights: [] // add extraction logic later
+            }]);
+          }
+        } catch (error) {
+          console.error("Error fetching AI response:", error);
+          // Optional: Add an error message to the chat
+        } finally {
+          setIsProcessing(false);
+        }
+      };
+
+      fetchAIResponse();
+    }
+  }, [transcript]);
 
   // Real Speech Recognition Logic
   const recognitionRef = useRef(null);
@@ -33,26 +78,39 @@ export default function VoiceInterviewPage() {
       recognition.lang = 'en-US';
 
       recognition.onresult = (event) => {
-        let currentInterim = '';
+        let fullTranscript = '';
         
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          const transcriptPart = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            setTranscript(prev => [...prev, { 
-              text: transcriptPart, 
-              speaker: 'user', 
-              timestamp: new Date().toISOString(),
-              highlights: [] 
-            }]);
-          } else {
-            currentInterim += transcriptPart;
-          }
+        // Accumulate all results from the current session
+        for (let i = 0; i < event.results.length; ++i) {
+          fullTranscript += event.results[i][0].transcript;
         }
-        setInterimText(currentInterim);
+        
+        setInterimText(fullTranscript);
+        interimTextRef.current = fullTranscript;
+
+        // Reset silence timer on every new result
+        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = setTimeout(() => {
+          recognition.stop(); // This triggers onend
+        }, 1500); // 1.5 seconds of silence
       };
 
       recognition.onend = () => {
         setIsListening(false);
+        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+
+        // Commit the text when recognition stops (either manually or via timer)
+        const finalText = interimTextRef.current;
+        if (finalText.trim()) {
+          setTranscript(prev => [...prev, { 
+            text: finalText, 
+            speaker: 'user', 
+            timestamp: new Date().toISOString(),
+            highlights: [] 
+          }]);
+          setInterimText('');
+          interimTextRef.current = '';
+        }
       };
       
       recognitionRef.current = recognition;
@@ -66,10 +124,14 @@ export default function VoiceInterviewPage() {
     }
 
     if (isListening) {
+      // Manual Stop
       recognitionRef.current.stop();
-      setIsListening(false);
+      // onend will handle the state update and text commit
     } else {
+      // Start
       try {
+        setInterimText('');
+        interimTextRef.current = '';
         recognitionRef.current.start();
         setIsListening(true);
       } catch (error) {
@@ -133,7 +195,7 @@ export default function VoiceInterviewPage() {
     <div className="voice-interview-page" style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-background)' }}>
       <Header title="Voice Interview" showBack showHome />
       
-      <div style={{ flex: 1, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '480px', margin: '0 auto', width: '100%', overflowY: 'auto', paddingBottom: '120px' }}>
+      <div style={{ flex: 1, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '800px', margin: '0 auto', width: '100%', overflowY: 'auto', paddingBottom: '120px' }}>
         {transcript.map((t, i) => (
           <div key={i} style={{
             width: '100%',
@@ -165,6 +227,17 @@ export default function VoiceInterviewPage() {
             <div style={{ fontSize: '15px', color: '#666', fontStyle: 'italic' }}>{interimText}</div>
           </div>
         )}
+        
+        {/* AI Processing Indicator */}
+        {isProcessing && (
+          <div style={{ width: '100%', padding: '1rem 1.25rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <div style={{ width: '8px', height: '8px', backgroundColor: 'var(--color-secondary)', borderRadius: '50%', animation: 'pulse 1s infinite' }}></div>
+            <div style={{ width: '8px', height: '8px', backgroundColor: 'var(--color-secondary)', borderRadius: '50%', animation: 'pulse 1s infinite 0.2s' }}></div>
+            <div style={{ width: '8px', height: '8px', backgroundColor: 'var(--color-secondary)', borderRadius: '50%', animation: 'pulse 1s infinite 0.4s' }}></div>
+            <span style={{ fontSize: '12px', color: '#999', marginLeft: '0.5rem' }}>SilverGuide is thinking...</span>
+          </div>
+        )}
+
         <div ref={endRef} />
       </div>
 
