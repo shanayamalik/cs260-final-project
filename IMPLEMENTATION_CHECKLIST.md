@@ -128,26 +128,26 @@ Track your progress as you build the app! Check off items as you complete them.
 - [x] Test with mock volunteer data
 
 ### Scheduling Component
-- [ ] Implement `src/components/SchedulingCalendar.jsx`
-  - [ ] Props: volunteerId, volunteerName, onSchedule, availableSlots
-  - [ ] Simple calendar/date picker (week view)
-  - [ ] Large date buttons (min 50x50px)
-  - [ ] Time slot options (Morning, Afternoon, Evening)
-  - [ ] Confirmation button
-  - [ ] Visual feedback for selected date/time
-- [ ] Test scheduling flow with mock data
+- [x] Implement `src/components/SchedulingCalendar.jsx`
+  - [x] Props: volunteerId, volunteerName, onSchedule, availableSlots
+  - [x] Simple calendar/date picker (week view)
+  - [x] Large date buttons (min 50x50px)
+  - [x] Time slot options (Morning, Afternoon, Evening)
+  - [x] Confirmation button
+  - [x] Visual feedback for selected date/time
+- [x] Test scheduling flow with mock data
 
 ### VolunteersPage Integration
-- [ ] Implement `src/pages/VolunteersPage.jsx`
-  - [ ] Load preferences from localStorage
-  - [ ] Filter volunteers using matching algorithm
-  - [ ] Display top 2-3 matches with VolunteerComparison
-  - [ ] Toggle to SchedulingCalendar on volunteer selection
-  - [ ] Save scheduled chat to localStorage and backend
-  - [ ] Navigate to /dashboard after booking
-- [ ] Add backend endpoint: POST /api/chats
-- [ ] Add backend endpoint: GET /api/chats/user/:userId
-- [ ] Test complete Medium Task flow (preferences → volunteers → schedule)
+- [x] Implement `src/pages/VolunteersPage.jsx`
+  - [x] Load preferences from localStorage
+  - [x] Filter volunteers using matching algorithm
+  - [x] Display top 2-3 matches with VolunteerComparison
+  - [x] Toggle to SchedulingCalendar on volunteer selection
+  - [x] Save scheduled chat to localStorage and backend
+  - [x] Navigate to /dashboard after booking
+- [x] Add backend endpoint: POST /api/chats
+- [x] Add backend endpoint: GET /api/chats/user/:userId
+- [x] Test complete Medium Task flow (preferences → volunteers → schedule)
 
 **Checkpoint:** ✅ User can browse volunteers, compare, and schedule a chat
 

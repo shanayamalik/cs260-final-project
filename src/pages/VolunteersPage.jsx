@@ -234,24 +234,37 @@ export default function VolunteersPage() {
   const handleSchedule = async (slot) => {
     const volunteer = volunteers.find((v) => v.id === selectedVolunteerId);
     if (!volunteer) return;
-
-    try{
-      // 7. Save to backend: POST /api/chats
+  
+    // 1) Create a chat object to store both locally and on the backend
+    const chat = {
+      volunteerId: volunteer.id,
+      volunteerName: volunteer.name,
+      slot,                         // { date, time, duration, ... }
+      createdAt: new Date().toISOString(),
+    };
+  
+    // 2) Save the chat to localStorage (append to an existing array)
+    try {
+      const existingRaw = localStorage.getItem("scheduledChats");
+      const existing = existingRaw ? JSON.parse(existingRaw) : [];
+      existing.push(chat);
+      localStorage.setItem("scheduledChats", JSON.stringify(existing));
+    } catch (e) {
+      console.warn("Failed to save chat to localStorage:", e);
+    }
+  
+    // 3) Send the chat to the backend
+    try {
       await fetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          volunteerId: volunteer.id,
-          volunteerName: volunteer.name,
-          slot, // e.g. { date, time } from SchedulingCalendar
-        }),
+        body: JSON.stringify(chat),
       });
     } catch (err) {
-      console.error("Failed to save chat request:", err);
-      // You could show a toast or inline error here
+      console.error("Failed to save chat request to backend:", err);
     }
-
-    // 8. Navigate to DashboardPage with confirmation
+  
+    // 4) Navigate to the dashboard after booking
     navigate("/dashboard");
   };
 
