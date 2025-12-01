@@ -399,7 +399,7 @@ export default function VoiceInterviewPage() {
                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
               
-              <span style={{ lineHeight: '1.3' }}>Profile ready! You can generate now or keep chatting.</span>
+              <span style={{ lineHeight: '1.3' }}>Profile ready! You can generate now or keep chatting to share more detail.</span>
 
               {/* Pointer (Triangle) */}
               <div style={{

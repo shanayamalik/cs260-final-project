@@ -17,6 +17,8 @@ export default function ProfileCreationPage() {
     Afternoons: false,
     Evenings: false
   });
+  const [languages, setLanguages] = useState('');
+  const [skills, setSkills] = useState('');
 
   // Load data from the Voice Interview analysis if available
   useEffect(() => {
@@ -63,6 +65,8 @@ export default function ProfileCreationPage() {
         text: availabilityText,
         checks: availabilityChecks
       },
+      languages,
+      skills,
       completedAt: new Date().toISOString()
     };
     
@@ -189,42 +193,52 @@ export default function ProfileCreationPage() {
               />
             </div>
 
-            {/* Optional Details Section - Soft Orange */}
+            {/* Languages Section - Soft Orange */}
             <div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#FFB74D', marginBottom: '12px', fontWeight: '700' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                 </svg>
-                Optional Details
+                Languages
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <input 
-                  type="text" 
-                  placeholder="Languages Spoken"
-                  style={{ 
-                    padding: '10px', borderRadius: '8px', border: '1px solid #FFF3E0', 
-                    backgroundColor: '#FAFAFA', fontSize: '14px' 
-                  }}
-                />
-                <input 
-                  type="text" 
-                  placeholder="Communication Style"
-                  style={{ 
-                    padding: '10px', borderRadius: '8px', border: '1px solid #FFF3E0', 
-                    backgroundColor: '#FAFAFA', fontSize: '14px' 
-                  }}
-                />
-                <input 
-                  type="text" 
-                  placeholder="Fun Fact"
-                  style={{ 
-                    padding: '10px', borderRadius: '8px', border: '1px solid #FFF3E0', 
-                    backgroundColor: '#FAFAFA', fontSize: '14px', gridColumn: 'span 2'
-                  }}
-                />
-              </div>
+              <input 
+                type="text" 
+                value={languages}
+                onChange={(e) => setLanguages(e.target.value)}
+                placeholder="e.g. English, Spanish, Mandarin"
+                style={{ 
+                  width: '100%', padding: '12px', borderRadius: '8px', 
+                  border: '1px solid #FFF3E0', backgroundColor: '#FAFAFA', 
+                  fontSize: '14px', outline: 'none', transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#FFB74D'}
+                onBlur={(e) => e.target.style.borderColor = '#FFF3E0'}
+              />
+            </div>
+
+            {/* Skills Section - Soft Pink */}
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#F06292', marginBottom: '12px', fontWeight: '700' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                Skills & Talents
+              </label>
+              <textarea 
+                value={skills}
+                onChange={(e) => setSkills(e.target.value)}
+                placeholder="Share a special skill! (e.g., Secret Recipes, Knitting, Storytelling, Chess)"
+                style={{ 
+                  width: '100%', padding: '12px', borderRadius: '8px', 
+                  border: '1px solid #FCE4EC', backgroundColor: '#FAFAFA', 
+                  fontSize: '14px', outline: 'none', transition: 'border-color 0.2s',
+                  minHeight: '80px', fontFamily: 'inherit', resize: 'vertical'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#F06292'}
+                onBlur={(e) => e.target.style.borderColor = '#FCE4EC'}
+              />
             </div>
             
             <button 
