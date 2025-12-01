@@ -194,9 +194,9 @@ Track your progress as you build the app! Check off items as you complete them.
   - [x] "Interview Notes" button next to Bio header
 
 ### Remaining Tasks
-- [ ] **Data Persistence:** Implement "Save Profile" on `ProfileCreationPage.jsx`
-  - [ ] Create backend endpoint `POST /api/users/profile`
-  - [ ] Save final profile data to `users.json` or database
+- [x] **Data Persistence:** Implement "Save Profile" on `ProfileCreationPage.jsx`
+  - [x] Create backend endpoint `POST /api/users/profile`
+  - [x] Save final profile data to `users.json` or database
 - [ ] **Validation:** Ensure required fields (About Me, Interests) are filled before saving
 - [ ] **UX Improvements:**
   - [ ] Add full-screen loading overlay during AI analysis
@@ -228,21 +228,6 @@ Track your progress as you build the app! Check off items as you complete them.
   - [ ] Profile completeness indicator (optional)
 - [ ] Test dashboard with mock scheduled chats
 - [ ] Add navigation from all tasks to dashboard
-
-### Accessibility Features
-- [ ] Add text size controls (A / A+)
-  - [ ] Toggle buttons to increase/decrease font size
-  - [ ] Save preference to localStorage
-  - [ ] Apply to entire app
-- [ ] Implement high contrast mode toggle
-  - [ ] Add [data-theme="high-contrast"] styles in variables.css
-  - [ ] Toggle button in header or settings
-- [ ] Accessibility audit:
-  - [ ] Test keyboard navigation (Tab, Enter, Escape)
-  - [ ] Verify all interactive elements are focusable
-  - [ ] Check ARIA labels on all buttons/inputs
-  - [ ] Test with screen reader (VoiceOver/NVDA)
-  - [ ] Verify color contrast ratios (WCAG AA)
 
 ### Error States & Edge Cases
 - [ ] Add loading states
