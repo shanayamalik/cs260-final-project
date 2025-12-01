@@ -174,7 +174,7 @@ Track your progress as you build the app! Check off items as you complete them.
   - [x] Real-time Speech-to-Text using Web Speech API
 
 ### Step 2: AI Intelligence & Backend
-- [x] **TODO: MINGHUI & CARRIE** - Create your own OpenAI API Key and add it to your local `.env` file (`OPENAI_API_KEY=sk-...`)
+- [ ] **TODO: MINGHUI & CARRIE** - Create your own OpenAI API Key and add it to your local `.env` file (`OPENAI_API_KEY=sk-...`)
 - [x] Implement `server/index.js` endpoints
   - [x] `POST /api/chat`: Handles conversation turn with OpenAI
   - [x] `POST /api/analyze-interview`: Generates profile JSON and Markdown summary

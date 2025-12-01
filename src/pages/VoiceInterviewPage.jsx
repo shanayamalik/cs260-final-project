@@ -374,6 +374,59 @@ export default function VoiceInterviewPage() {
       {/* Generate Button (Right) */}
       {transcript.length > 0 && (
         <div style={{ position: 'fixed', bottom: '2.5rem', right: '2rem', zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
+          
+          {/* Completion Hint Bubble */}
+          {progress >= 100 && !isAnalyzing && (
+            <div style={{
+              backgroundColor: 'white',
+              color: '#333',
+              padding: '10px 14px',
+              borderRadius: '12px',
+              fontSize: '13px',
+              fontWeight: '600',
+              marginBottom: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              border: '1px solid #E0E0E0',
+              animation: 'fadeIn 0.5s ease-out',
+              maxWidth: '200px',
+              textAlign: 'left',
+              position: 'relative',
+              display: 'flex', alignItems: 'center', gap: '8px'
+            }}>
+              {/* Icon */}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-secondary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              
+              <span style={{ lineHeight: '1.3' }}>Profile ready! You can generate now or keep chatting.</span>
+
+              {/* Pointer (Triangle) */}
+              <div style={{
+                position: 'absolute',
+                bottom: '-6px',
+                right: '24px',
+                width: '0',
+                height: '0',
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderTop: '6px solid white',
+                zIndex: 2
+              }}></div>
+              <div style={{
+                position: 'absolute',
+                bottom: '-7.5px',
+                right: '24px',
+                width: '0',
+                height: '0',
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderTop: '6px solid #E0E0E0',
+                zIndex: 1
+              }}></div>
+            </div>
+          )}
+
           <button 
             onClick={handleFinishInterview}
             disabled={progress < 100 || isAnalyzing || isProcessing || isListening}
