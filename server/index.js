@@ -94,11 +94,25 @@ app.post('/api/chat', async (req, res) => {
         ...messages
       ],
       temperature: 0.7,
-      max_tokens: 150,
+      max_tokens: 250,
+      response_format: { type: "json_object" } // Force JSON mode if using compatible model
     });
 
-    const aiResponse = completion.choices[0].message.content;
-    res.json({ message: aiResponse });
+    const rawContent = completion.choices[0].message.content;
+    let parsedResponse;
+    
+    try {
+      parsedResponse = JSON.parse(rawContent);
+    } catch (e) {
+      console.warn("AI failed to return JSON, falling back to text wrapper");
+      parsedResponse = {
+        message: rawContent,
+        progress: 10, // Default low progress if we can't parse
+        missing_fields: []
+      };
+    }
+
+    res.json(parsedResponse);
 
   } catch (error) {
     console.error('OpenAI API Error:', error);

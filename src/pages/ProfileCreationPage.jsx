@@ -102,7 +102,7 @@ export default function ProfileCreationPage() {
             {/* Bio Section - Soft Blue */}
             <div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#5C9CE6', marginBottom: '12px', fontWeight: '700' }}>
-                <UserIcon /> About Me <span style={{ color: 'var(--color-error)', marginLeft: '4px' }}>*</span>
+                <UserIcon /> About Me <span style={{ color: '#D32F2F', marginLeft: '2px', fontSize: '18px', fontWeight: '900', lineHeight: '1' }}>*</span>
               </label>
               {/* TODO: Add validation logic to ensure this field is not empty before saving */}
               <textarea 
@@ -123,7 +123,7 @@ export default function ProfileCreationPage() {
             {/* Interests Section - Soft Purple */}
             <div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#BA68C8', marginBottom: '12px', fontWeight: '700' }}>
-                <HeartIcon /> Interests <span style={{ color: 'var(--color-error)', marginLeft: '4px' }}>*</span>
+                <HeartIcon /> Interests <span style={{ color: '#D32F2F', marginLeft: '2px', fontSize: '18px', fontWeight: '900', lineHeight: '1' }}>*</span>
               </label>
               {/* TODO: Add validation logic to ensure at least 1 interest is selected */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -157,7 +157,7 @@ export default function ProfileCreationPage() {
             {/* Availability Section - Soft Teal */}
             <div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#4DB6AC', marginBottom: '12px', fontWeight: '700' }}>
-                <CalendarIcon /> Availability <span style={{ color: 'var(--color-error)', marginLeft: '4px' }}>*</span>
+                <CalendarIcon /> Availability <span style={{ color: '#D32F2F', marginLeft: '2px', fontSize: '18px', fontWeight: '900', lineHeight: '1' }}>*</span>
               </label>
               {/* TODO: Add validation logic to ensure at least 1 availability option is checked */}
               
@@ -187,6 +187,44 @@ export default function ProfileCreationPage() {
                 onFocus={(e) => e.target.style.borderBottomColor = '#4DB6AC'}
                 onBlur={(e) => e.target.style.borderBottomColor = '#E0F2F1'}
               />
+            </div>
+
+            {/* Optional Details Section - Soft Orange */}
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#FFB74D', marginBottom: '12px', fontWeight: '700' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Optional Details
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <input 
+                  type="text" 
+                  placeholder="Languages Spoken"
+                  style={{ 
+                    padding: '10px', borderRadius: '8px', border: '1px solid #FFF3E0', 
+                    backgroundColor: '#FAFAFA', fontSize: '14px' 
+                  }}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Communication Style"
+                  style={{ 
+                    padding: '10px', borderRadius: '8px', border: '1px solid #FFF3E0', 
+                    backgroundColor: '#FAFAFA', fontSize: '14px' 
+                  }}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Fun Fact"
+                  style={{ 
+                    padding: '10px', borderRadius: '8px', border: '1px solid #FFF3E0', 
+                    backgroundColor: '#FAFAFA', fontSize: '14px', gridColumn: 'span 2'
+                  }}
+                />
+              </div>
             </div>
             
             <button 

@@ -5,11 +5,7 @@ import { jsPDF } from "jspdf";
 
 export default function VoiceInterviewPage() {
   const navigate = useNavigate();
-  /* 
-    TODO: undecided between the current Purple/Pastel theme vs. a Blue/Green theme.
-    Consider changing the background color to plain 'white' instead of 'var(--color-background)'.
-  */
-
+  
   // Mock state
   const [transcript, setTranscript] = useState([
     { text: "Hi! I'm here to help match you with the right volunteer. Tell me a little about what you enjoy doing.", speaker: 'ai', timestamp: new Date().toISOString() }
@@ -21,6 +17,9 @@ export default function VoiceInterviewPage() {
   const endRef = useRef(null);
   const interimTextRef = useRef('');
   const silenceTimerRef = useRef(null);
+
+  // --- Progress Logic ---
+  const [progress, setProgress] = useState(0);
 
   // Auto-scroll
   useEffect(() => {
@@ -168,6 +167,11 @@ export default function VoiceInterviewPage() {
               timestamp: new Date().toISOString(),
               highlights: [] // add extraction logic later
             }]);
+            
+            // Update progress from backend analysis
+            if (typeof data.progress === 'number') {
+              setProgress(data.progress);
+            }
 
             // TODO: (optional?) Text-to-Speech (TTS)
             // Implement window.speechSynthesis here to read 'data.message' aloud.
@@ -357,61 +361,69 @@ export default function VoiceInterviewPage() {
           </div>
         )}
 
-        {/* 
-          TODO: IMPROVE BUTTON APPEARANCE LOGIC
-          Currently, this button appears as soon as there is any transcript.
-          
-          Future Requirement:
-          Only show this "Generate My Profile" button after the AI has collected 3 key pieces of info:
-          1. Hobbies / Interests
-          2. Help Type (Volunteer vs. Senior vs. Both)
-          3. Availability
-          
-          We might need a helper function like `checkProfileCompleteness(transcript)` to decide when to reveal this.
-        */}
-        {transcript.length > 0 && (
-          <div style={{ 
-            width: '100%', 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            padding: '2rem 0',
-            marginTop: 'auto' /* Pushes button to the bottom if transcript is short */
-          }}>
-            <button 
-              onClick={handleFinishInterview}
-              disabled={isAnalyzing || isProcessing || isListening}
-              style={{
-                padding: '12px 28px',
-                backgroundColor: 'var(--color-secondary)', // Lilac
-                color: '#333',
-                border: 'none',
-                borderRadius: '50px',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                boxShadow: '0 4px 16px rgba(220, 208, 255, 0.6)',
-                display: 'flex', alignItems: 'center', gap: '10px',
-                transition: 'transform 0.2s',
-                opacity: (isAnalyzing || isProcessing || isListening) ? 0.6 : 1,
-              }}
-            >
-              {/* Sparkles Icon SVG */}
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3V5m0 14v2M5 12H3m18 0h-2M17.657 6.343l-1.414 1.414M6.343 17.657l-1.414 1.414M17.657 17.657l-1.414-1.414M6.343 6.343L4.929 4.929" />
-              </svg>
-              {isAnalyzing ? 'Generating...' : 'Generate My Profile'}
-            </button>
-          </div>
-        )}
-
         <div ref={endRef} />
       </div>
 
-      {/* Fixed Center Placement */}
+      {/* Fixed Controls Layer */}
+      
+      {/* Mic Button (Center) */}
       <div style={{ position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', zIndex: 20 }}>
         <MicButton size="large" floating />
       </div>
+
+      {/* Generate Button (Right) */}
+      {transcript.length > 0 && (
+        <div style={{ position: 'fixed', bottom: '2.5rem', right: '2rem', zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
+          <button 
+            onClick={handleFinishInterview}
+            disabled={progress < 100 || isAnalyzing || isProcessing || isListening}
+            style={{
+              padding: '12px 28px',
+              backgroundColor: progress >= 100 ? 'var(--color-secondary)' : '#F5F5F5',
+              color: progress >= 100 ? '#333' : '#888',
+              border: progress >= 100 ? 'none' : '1px solid #E0E0E0',
+              borderRadius: '50px',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: progress >= 100 ? 'pointer' : 'default',
+              boxShadow: progress >= 100 ? '0 4px 16px rgba(220, 208, 255, 0.6)' : 'none',
+              display: 'flex', alignItems: 'center', gap: '12px',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              opacity: (isAnalyzing || isProcessing || isListening) ? 0.6 : 1,
+              minWidth: '180px',
+              justifyContent: 'center'
+            }}
+          >
+            {progress < 100 ? (
+              <>
+                <div style={{ position: 'relative', width: '20px', height: '20px' }}>
+                  {/* Background Circle */}
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="8" fill="none" stroke="#C0C0C0" strokeWidth="3.5" />
+                    {/* Progress Circle */}
+                    <circle 
+                      cx="10" cy="10" r="8" fill="none" stroke="#9370DB" strokeWidth="3.5" 
+                      strokeDasharray="50.26" 
+                      strokeDashoffset={50.26 * (1 - progress / 100)}
+                      transform="rotate(-90 10 10)"
+                      style={{ transition: 'stroke-dashoffset 0.5s ease-out' }}
+                    />
+                  </svg>
+                </div>
+                <span style={{ fontSize: '14px' }}>Gathering Info...</span>
+              </>
+            ) : (
+              <>
+                {isAnalyzing ? 'Generating...' : 'Generate My Profile'}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
