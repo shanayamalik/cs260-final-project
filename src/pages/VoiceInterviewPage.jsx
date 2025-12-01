@@ -48,83 +48,19 @@ export default function VoiceInterviewPage() {
 
       const data = await response.json();
       
-      if (data.summaryMarkdown) {
-        // Generate PDF with basic Markdown formatting
-        const doc = new jsPDF();
-        
-        // Title
-        doc.setFontSize(22);
-        doc.setFont("helvetica", "bold");
-        doc.text("Volunteer Profile Summary", 20, 20);
-        
-        let yPos = 40;
-        const pageWidth = 170; // mm
-        
-        // Split by lines to parse markdown headers
-        const lines = data.summaryMarkdown.split('\n');
-        
-        lines.forEach(line => {
-          // Check for page break
-          if (yPos > 280) {
-            doc.addPage();
-            yPos = 20;
-          }
-
-          if (line.startsWith('# ')) {
-            // H1
-            doc.setFontSize(18);
-            doc.setFont("helvetica", "bold");
-            doc.text(line.replace('# ', ''), 20, yPos);
-            yPos += 10;
-          } else if (line.startsWith('## ')) {
-            // H2
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
-            doc.text(line.replace('## ', ''), 20, yPos);
-            yPos += 8;
-          } else if (line.startsWith('### ')) {
-            // H3
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "bold");
-            doc.text(line.replace('### ', ''), 20, yPos);
-            yPos += 7;
-          } else if (line.trim() === '') {
-            // Empty line
-            yPos += 4;
-          } else {
-            // Body text
-            doc.setFontSize(11);
-            doc.setFont("helvetica", "normal");
-            
-            // Clean up bold markers for PDF (simple removal, real bolding is hard)
-            const cleanLine = line.replace(/\*\*/g, '').replace(/__/g, '');
-            
-            const splitLines = doc.splitTextToSize(cleanLine, pageWidth);
-            doc.text(splitLines, 20, yPos);
-            yPos += (splitLines.length * 5);
-          }
-        });
-        
-        doc.save('interview_summary.pdf');
-      } else if (data.summaryText) {
-        // Fallback for plain text prompt
-        const doc = new jsPDF();
-        doc.setFontSize(20);
-        doc.text("Volunteer Profile Summary", 20, 20);
-        doc.setFontSize(12);
-        const splitText = doc.splitTextToSize(data.summaryText, 170);
-        doc.text(splitText, 20, 40);
-        doc.save('interview_summary.pdf');
-      }
-
+      // Note: PDF generation is now handled in the ProfileCreationPage on demand
+      
       // Navigate to Profile Creation with the data
       const analysisData = {
         summary: data.summaryMarkdown || data.summaryText,
+        shortBio: data.structuredData?.shortBio || '',
         interests: data.structuredData?.interests || [],
-        availability: data.structuredData?.availability || ''
+        availability: data.structuredData?.availability || '',
+        languages: data.structuredData?.languages || [],
+        skills: data.structuredData?.skills || []
       };
 
-      // Small delay to allow the download to start before navigating
+      // Small delay to allow the user to see completion before navigating
       setTimeout(() => {
         navigate('/profile-creation', { state: { analysisData } });
       }, 1000);

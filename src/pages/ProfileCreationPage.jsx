@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/common/Header';
+import { jsPDF } from "jspdf";
 
 export default function ProfileCreationPage() {
   const navigate = useNavigate();
@@ -47,7 +48,13 @@ export default function ProfileCreationPage() {
   useEffect(() => {
     if (location.state?.analysisData) {
       const data = location.state.analysisData;
-      if (data.summary) setBio(data.summary);
+      // Use shortBio if available, otherwise fallback to summary
+      if (data.shortBio) {
+        setBio(data.shortBio);
+      } else if (data.summary) {
+        setBio(data.summary);
+      }
+      
       if (data.interests && Array.isArray(data.interests)) setInterests(data.interests);
       if (data.availability) {
         setAvailabilityText(data.availability);
@@ -65,6 +72,72 @@ export default function ProfileCreationPage() {
       if (data.skills && Array.isArray(data.skills)) setSkills(data.skills.join(', '));
     }
   }, [location.state]);
+
+  const handleDownloadTranscript = () => {
+    const data = location.state?.analysisData;
+    if (!data || (!data.summary && !data.summaryMarkdown)) {
+      alert("No transcript summary available to download.");
+      return;
+    }
+
+    const summaryContent = data.summary || data.summaryMarkdown;
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Volunteer Profile Summary", 20, 20);
+    
+    let yPos = 40;
+    const pageWidth = 170; // mm
+    
+    // Split by lines to parse markdown headers
+    const lines = summaryContent.split('\n');
+    
+    lines.forEach(line => {
+      // Check for page break
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 20;
+      }
+
+      if (line.startsWith('# ')) {
+        // H1
+        doc.setFontSize(18);
+        doc.setFont("helvetica", "bold");
+        doc.text(line.replace('# ', ''), 20, yPos);
+        yPos += 10;
+      } else if (line.startsWith('## ')) {
+        // H2
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text(line.replace('## ', ''), 20, yPos);
+        yPos += 8;
+      } else if (line.startsWith('### ')) {
+        // H3
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text(line.replace('### ', ''), 20, yPos);
+        yPos += 7;
+      } else if (line.trim() === '') {
+        // Empty line
+        yPos += 4;
+      } else {
+        // Body text
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        
+        // Clean up bold markers for PDF
+        const cleanLine = line.replace(/\*\*/g, '').replace(/__/g, '');
+        
+        const splitLines = doc.splitTextToSize(cleanLine, pageWidth);
+        doc.text(splitLines, 20, yPos);
+        yPos += (splitLines.length * 5);
+      }
+    });
+    
+    doc.save('interview_summary.pdf');
+  };
 
   const handleInterestRemove = (tagToRemove) => {
     setInterests(interests.filter(tag => tag !== tagToRemove));
@@ -238,7 +311,8 @@ export default function ProfileCreationPage() {
       )}
       
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem 1rem' }}>
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', position: 'relative' }}>
+          
           <h3 style={{ marginBottom: '2rem', fontSize: '18px', color: '#444', textAlign: 'center' }}>
             Review & Confirm
           </h3>
@@ -248,11 +322,31 @@ export default function ProfileCreationPage() {
             {/* Bio Section - Soft Blue */}
             <div>
               {/* TODO: Consider adding other required or optional sections to the profile (e.g. Location, Availability Preferences) */}
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#5C9CE6', marginBottom: '12px', fontWeight: '700' }}>
-                <UserIcon /> About Me <span style={{ color: '#D32F2F', marginLeft: '2px', fontSize: '18px', fontWeight: '900', lineHeight: '1' }}>*</span>
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#5C9CE6', fontWeight: '700', margin: 0 }}>
+                  <UserIcon /> About Me <span style={{ color: '#D32F2F', marginLeft: '2px', fontSize: '18px', fontWeight: '900', lineHeight: '1' }}>*</span>
+                </label>
+                
+                {/* Bio Header Placement (Pill Style) */}
+                <button 
+                  onClick={handleDownloadTranscript}
+                  style={{ 
+                    padding: '6px 12px', backgroundColor: '#f0f7ff', color: '#0066cc', 
+                    border: 'none', borderRadius: '20px', fontWeight: '600', fontSize: '11px', 
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                  }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Interview Notes
+                </button>
+              </div>
+
               {/* TODO: Add validation logic to ensure this field is not empty before saving */}
-              <textarea 
+              <textarea  
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 style={{ 
@@ -394,6 +488,8 @@ export default function ProfileCreationPage() {
             >
               Confirm Profile
             </button>
+
+
           </div>
         </div>
       </div>
