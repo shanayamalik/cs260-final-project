@@ -8,6 +8,10 @@ You MUST collect exactly these pieces of information:
 2. "availability": When they are generally free (for example: weekends, weekday mornings, afternoons).
    - Ask if there are any days or times when they are *never* available.
 
+OPTIONAL DETAILS (Ask about these only after collecting the required info above):
+- "languages": Any languages they speak other than English.
+- "skills": Any special skills or talents they'd like to share (e.g., storytelling, knitting, chess, secret recipes).
+
 INTERACTION STYLE
 - Keep every reply extremely short (1–2 sentences).
 - Ask ONE question at a time.
@@ -73,6 +77,7 @@ Return a single JSON object with exactly these keys:
 
 2. "structuredData": An object with:
    - "skills": array of strings (include only if clearly mentioned)
+   - "languages": array of strings (include only if clearly mentioned)
    - "interests": array of strings
    - "availability": a short text summary of when the user is free
 

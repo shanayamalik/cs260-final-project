@@ -38,6 +38,8 @@ export default function ProfileCreationPage() {
           Evenings: text.includes('evening')
         }));
       }
+      if (data.languages && Array.isArray(data.languages)) setLanguages(data.languages.join(', '));
+      if (data.skills && Array.isArray(data.skills)) setSkills(data.skills.join(', '));
     }
   }, [location.state]);
 
