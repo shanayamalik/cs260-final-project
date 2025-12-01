@@ -34,6 +34,7 @@ export default function VoiceInterviewPage() {
     }
     
     setIsAnalyzing(true);
+    // TODO: Implement a full-screen loading overlay with a friendly message (e.g., "SilverGuide is writing your profile...") to improve user experience during the 5-10s wait.
     try {
       const response = await fetch('/api/analyze-interview', {
         method: 'POST',
@@ -67,6 +68,7 @@ export default function VoiceInterviewPage() {
 
     } catch (error) {
       console.error("Analysis failed:", error);
+      // TODO: Implement a graceful "Retry" mechanism or allow manual skip to profile page with empty data if analysis fails repeatedly.
       alert(`Failed to analyze interview: ${error.message}`);
     } finally {
       setIsAnalyzing(false);

@@ -8,6 +8,7 @@ export default function ProfileCreationPage() {
   const location = useLocation();
   
   // Default state
+  // TODO: Improve the "About Me" section to have a more robust AI-generated bio, or allow the user to regenerate it here if they are not satisfied.
   const [bio, setBio] = useState('');
   const [interests, setInterests] = useState([]);
   const [availabilityText, setAvailabilityText] = useState('');
@@ -166,6 +167,7 @@ export default function ProfileCreationPage() {
   };
 
   const handleSave = () => {
+    // TODO: Add validation logic to ensure required fields (About Me, Interests) are not empty before saving. Disable the button if invalid.
     // In a real app, this would send data to the backend
     const profileData = {
       bio,
