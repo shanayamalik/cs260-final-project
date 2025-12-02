@@ -8,6 +8,7 @@ import VolunteersPage from './pages/VolunteersPage';
 import VoiceInterviewPage from './pages/VoiceInterviewPage';
 import ProfileCreationPage from './pages/ProfileCreationPage';
 import ButtonDesignOptions from './pages/ButtonDesignOptions';
+import CardLayoutOptions from './pages/CardLayoutOptions';
 import './styles/global.css';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/interview" element={<VoiceInterviewPage />} />
           <Route path="/profile-creation" element={<ProfileCreationPage />} />
           <Route path="/button-designs" element={<ButtonDesignOptions />} />
+          <Route path="/card-layouts" element={<CardLayoutOptions />} />
         </Routes>
       </div>
     </BrowserRouter>

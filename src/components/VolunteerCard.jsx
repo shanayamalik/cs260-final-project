@@ -5,11 +5,11 @@ import Card from './common/Card';
  * VolunteerCard Component
  * Displays volunteer information in the "Compact Row" style.
  * 
- * Shows: Name, icon, role, verified badge, short bio, 
+ * Shows: Name, icon, active status, experience, shared interests,
  *        "Can help with", languages, and availability.
  * 
  * Extended profile (modal) shows: Full about me, skills list,
- *        detailed availability, years volunteering.
+ *        detailed availability, age range.
  * 
  * @param {Object} props
  * @param {Object} props.volunteer - Volunteer data object
@@ -22,9 +22,9 @@ export default function VolunteerCard({ volunteer, onViewProfile, selected }) {
   const { 
     name, 
     icon,
-    verified, 
-    role,
-    bio, 
+    isActive,
+    yearsVolunteering,
+    sharedInterests = [],
     helpsWith = [],
     languages = [],
     availability
@@ -43,7 +43,7 @@ export default function VolunteerCard({ volunteer, onViewProfile, selected }) {
         backgroundColor: selected ? '#F5F9FF' : undefined
       }}
     >
-      {/* Header: Icon + Name + Role */}
+      {/* Header: Icon + Name + Status/Experience */}
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
         <div style={{ 
           width: '60px', height: '60px', borderRadius: '12px', 
@@ -55,25 +55,32 @@ export default function VolunteerCard({ volunteer, onViewProfile, selected }) {
         <div>
           <h3 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{name}</h3>
           <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
-            {verified && <span style={{ color: '#2E7D32', fontWeight: 'bold' }}>✓ Verified</span>}
-            {verified && role && <span>•</span>}
-            {role && (
-              <span style={{ backgroundColor: '#E0F2F1', padding: '2px 8px', borderRadius: '4px', color: '#004D40', fontWeight: '600' }}>
-                {role}
+            {isActive && (
+              <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+                Active
+              </span>
+            )}
+            {isActive && yearsVolunteering && <span>•</span>}
+            {yearsVolunteering && (
+              <span style={{ color: '#F5A623' }}>
+                ★ {yearsVolunteering}y experience
               </span>
             )}
           </div>
         </div>
       </div>
 
-      {/* Bio */}
-      {bio && (
-        <p style={{ 
-          margin: '0 0 12px 0', fontSize: '13px', color: '#555', 
-          fontStyle: 'italic', lineHeight: '1.4'
-        }}>
-          "{bio}"
-        </p>
+      {/* Shared interests - small tags */}
+      {sharedInterests.length > 0 && (
+        <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ fontSize: '11px', color: '#888' }}>In common:</span>
+          {sharedInterests.map((interest, i) => (
+            <span key={i} style={{ fontSize: '11px', padding: '3px 8px', backgroundColor: '#F0F0F0', borderRadius: '12px', color: '#555' }}>
+              {interest}
+            </span>
+          ))}
+        </div>
       )}
       
       {/* Can Help With */}

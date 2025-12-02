@@ -2,436 +2,312 @@ import React, { useState } from 'react';
 import Header from '../components/common/Header';
 import Card from '../components/common/Card';
 
-// Sample volunteer for preview
-const sampleVolunteer = {
-  name: 'Maria Santos',
-  icon: '👩‍🏫',
-  role: 'Retired Librarian',
-  verified: true,
-  bio: 'Books brought me to this country, and now I want to share that love of reading with others.',
-  helpsWith: ['Companionship', 'Reading Together', 'Library Help'],
-  languages: ['Portuguese', 'English', 'Spanish'],
-  availability: 'Tue, Thu Mornings',
-};
+// Sample volunteers for preview - with different status/experience combos
+const sampleVolunteers = [
+  {
+    name: 'Maria Santos',
+    icon: '👩‍🏫',
+    role: 'Retired Librarian',
+    bio: 'Books brought me to this country, and now I want to share that love of reading with others.',
+    helpsWith: ['Companionship', 'Reading Together', 'Library Help'],
+    languages: ['Portuguese', 'English', 'Spanish'],
+    availability: 'Tue, Thu Mornings',
+    isActive: true,
+    yearsVolunteering: 4,
+  },
+  {
+    name: 'Raj Patel',
+    icon: '💻',
+    role: 'Tech Helper',
+    bio: 'Technology should make life easier, not harder. I\'m here to help bridge that gap.',
+    helpsWith: ['Technology Help', 'Video Calls', 'Devices'],
+    availability: 'Weekends',
+    isActive: true,
+    // No yearsVolunteering - chose not to share
+  },
+  {
+    name: 'Fatima Hassan',
+    icon: '🎨',
+    role: 'Crafts & Conversation',
+    bio: 'I believe everyone has a story worth hearing.',
+    helpsWith: ['Companionship', 'Crafts', 'Light Cooking'],
+    languages: ['Urdu', 'English'],
+    availability: 'Mon, Wed, Fri Afternoons',
+    isActive: false, // Not currently active
+    yearsVolunteering: 2,
+  },
+];
 
-// Button Option A: Solid Primary (current)
-function ButtonOptionA({ onClick }) {
+// Badge Option A: Current design (Verified + Role tag)
+function BadgeOptionA({ volunteer }) {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        width: '100%',
-        padding: '12px 20px',
-        fontSize: '15px',
-        fontWeight: '600',
-        color: 'white',
-        backgroundColor: '#1565C0',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s',
-      }}
-      onMouseOver={(e) => e.target.style.backgroundColor = '#0D47A1'}
-      onMouseOut={(e) => e.target.style.backgroundColor = '#1565C0'}
-    >
-      View Profile
-    </button>
-  );
-}
-
-// Button Option B: Outline Style
-function ButtonOptionB({ onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        width: '100%',
-        padding: '12px 20px',
-        fontSize: '15px',
-        fontWeight: '600',
-        color: '#1565C0',
-        backgroundColor: 'transparent',
-        border: '2px solid #1565C0',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        transition: 'all 0.2s',
-      }}
-      onMouseOver={(e) => {
-        e.target.style.backgroundColor = '#1565C0';
-        e.target.style.color = 'white';
-      }}
-      onMouseOut={(e) => {
-        e.target.style.backgroundColor = 'transparent';
-        e.target.style.color = '#1565C0';
-      }}
-    >
-      View Profile
-    </button>
-  );
-}
-
-// Button Option C: Soft/Muted Style
-function ButtonOptionC({ onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        width: '100%',
-        padding: '12px 20px',
-        fontSize: '15px',
-        fontWeight: '600',
-        color: '#1565C0',
-        backgroundColor: '#E3F2FD',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s',
-      }}
-      onMouseOver={(e) => e.target.style.backgroundColor = '#BBDEFB'}
-      onMouseOut={(e) => e.target.style.backgroundColor = '#E3F2FD'}
-    >
-      View Profile
-    </button>
-  );
-}
-
-// Button Option D: Text Link Style
-function ButtonOptionD({ onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        width: '100%',
-        padding: '12px 20px',
-        fontSize: '15px',
-        fontWeight: '600',
-        color: '#1565C0',
-        backgroundColor: 'transparent',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        textDecoration: 'underline',
-        textUnderlineOffset: '3px',
-      }}
-      onMouseOver={(e) => e.target.style.color = '#0D47A1'}
-      onMouseOut={(e) => e.target.style.color = '#1565C0'}
-    >
-      View Profile →
-    </button>
-  );
-}
-
-// Button Option E: Pill Style with Icon
-function ButtonOptionE({ onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        width: '100%',
-        padding: '10px 20px',
-        fontSize: '14px',
-        fontWeight: '600',
-        color: '#444',
-        backgroundColor: '#F5F5F5',
-        border: '1px solid #E0E0E0',
-        borderRadius: '24px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '6px',
-        transition: 'all 0.2s',
-      }}
-      onMouseOver={(e) => {
-        e.target.style.backgroundColor = '#EEEEEE';
-        e.target.style.borderColor = '#BDBDBD';
-      }}
-      onMouseOut={(e) => {
-        e.target.style.backgroundColor = '#F5F5F5';
-        e.target.style.borderColor = '#E0E0E0';
-      }}
-    >
-      👤 View Profile
-    </button>
-  );
-}
-
-// Button Option F: Green/Teal Accent
-function ButtonOptionF({ onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        width: '100%',
-        padding: '12px 20px',
-        fontSize: '15px',
-        fontWeight: '600',
-        color: 'white',
-        backgroundColor: '#00897B',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s',
-      }}
-      onMouseOver={(e) => e.target.style.backgroundColor = '#00695C'}
-      onMouseOut={(e) => e.target.style.backgroundColor = '#00897B'}
-    >
-      View Profile
-    </button>
-  );
-}
-
-// Button Option G: Small Text Link (Minimalist)
-function ButtonOptionG({ onClick }) {
-  return (
-    <div style={{ textAlign: 'center' }}>
-      <button
-        onClick={onClick}
-        style={{
-          padding: '6px 12px',
-          fontSize: '13px',
-          fontWeight: '500',
-          color: '#1565C0',
-          backgroundColor: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          textDecoration: 'underline',
-          textUnderlineOffset: '2px',
-        }}
-        onMouseOver={(e) => e.target.style.color = '#0D47A1'}
-        onMouseOut={(e) => e.target.style.color = '#1565C0'}
-      >
-        View Profile
-      </button>
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
+      <span style={{ color: '#2E7D32', fontWeight: 'bold' }}>✓ Verified</span>
+      <span>•</span>
+      <span style={{ backgroundColor: '#E0F2F1', padding: '2px 8px', borderRadius: '4px', color: '#004D40', fontWeight: '600' }}>
+        {volunteer.role}
+      </span>
     </div>
   );
 }
 
-// Button Option H: Small Outline (Minimalist)
-function ButtonOptionH({ onClick }) {
+// Badge Option B: Active status + Experience (both optional)
+function BadgeOptionB({ volunteer }) {
   return (
-    <div style={{ textAlign: 'center' }}>
-      <button
-        onClick={onClick}
-        style={{
-          padding: '6px 16px',
-          fontSize: '12px',
-          fontWeight: '600',
-          color: '#666',
-          backgroundColor: 'transparent',
-          border: '1px solid #DDD',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-        }}
-        onMouseOver={(e) => {
-          e.target.style.borderColor = '#1565C0';
-          e.target.style.color = '#1565C0';
-        }}
-        onMouseOut={(e) => {
-          e.target.style.borderColor = '#DDD';
-          e.target.style.color = '#666';
-        }}
-      >
-        View Profile
-      </button>
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
+      {volunteer.isActive && (
+        <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+          Active
+        </span>
+      )}
+      {volunteer.isActive && volunteer.yearsVolunteering && <span>•</span>}
+      {volunteer.yearsVolunteering && (
+        <span style={{ color: '#666' }}>
+          ★ {volunteer.yearsVolunteering} {volunteer.yearsVolunteering === 1 ? 'year' : 'years'}
+        </span>
+      )}
     </div>
   );
 }
 
-// Button Option I: Small Pill (Minimalist)
-function ButtonOptionI({ onClick }) {
+// Badge Option B2: Active + Experience with filled star
+function BadgeOptionB2({ volunteer }) {
   return (
-    <div style={{ textAlign: 'center' }}>
-      <button
-        onClick={onClick}
-        style={{
-          padding: '5px 14px',
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#555',
-          backgroundColor: '#F0F0F0',
-          border: 'none',
-          borderRadius: '16px',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s',
-        }}
-        onMouseOver={(e) => e.target.style.backgroundColor = '#E0E0E0'}
-        onMouseOut={(e) => e.target.style.backgroundColor = '#F0F0F0'}
-      >
-        View Profile
-      </button>
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
+      {volunteer.isActive && (
+        <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+          Active
+        </span>
+      )}
+      {volunteer.isActive && volunteer.yearsVolunteering && <span>•</span>}
+      {volunteer.yearsVolunteering && (
+        <span style={{ color: '#F5A623' }}>
+          ★ {volunteer.yearsVolunteering}y
+        </span>
+      )}
     </div>
   );
 }
 
-// Button Option J: Icon Only (Ultra Minimalist)
-function ButtonOptionJ({ onClick }) {
+// Badge Option B3: Active + Experience with checkmark
+function BadgeOptionB3({ volunteer }) {
   return (
-    <div style={{ textAlign: 'center' }}>
-      <button
-        onClick={onClick}
-        style={{
-          padding: '8px 12px',
-          fontSize: '12px',
-          fontWeight: '500',
-          color: '#888',
-          backgroundColor: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px',
-          transition: 'color 0.2s',
-        }}
-        onMouseOver={(e) => e.target.style.color = '#1565C0'}
-        onMouseOut={(e) => e.target.style.color = '#888'}
-      >
-        View Profile →
-      </button>
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
+      {volunteer.isActive && (
+        <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+          Active
+        </span>
+      )}
+      {volunteer.isActive && volunteer.yearsVolunteering && <span>•</span>}
+      {volunteer.yearsVolunteering && (
+        <span style={{ color: '#666' }}>
+          ✦ {volunteer.yearsVolunteering} {volunteer.yearsVolunteering === 1 ? 'year' : 'years'}
+        </span>
+      )}
     </div>
   );
 }
 
-// Button Option K: Small Soft Blue (Minimalist)
-function ButtonOptionK({ onClick }) {
+// Badge Option B4: Active + Experience with badge icon
+function BadgeOptionB4({ volunteer }) {
   return (
-    <div style={{ textAlign: 'center' }}>
-      <button
-        onClick={onClick}
-        style={{
-          padding: '6px 14px',
-          fontSize: '12px',
-          fontWeight: '600',
-          color: '#1565C0',
-          backgroundColor: '#E3F2FD',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s',
-        }}
-        onMouseOver={(e) => e.target.style.backgroundColor = '#BBDEFB'}
-        onMouseOut={(e) => e.target.style.backgroundColor = '#E3F2FD'}
-      >
-        View Profile
-      </button>
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
+      {volunteer.isActive && (
+        <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+          Active
+        </span>
+      )}
+      {volunteer.isActive && volunteer.yearsVolunteering && <span>•</span>}
+      {volunteer.yearsVolunteering && (
+        <span style={{ color: '#666', display: 'flex', alignItems: 'center', gap: '3px' }}>
+          <span style={{ fontSize: '11px' }}>●</span> {volunteer.yearsVolunteering} {volunteer.yearsVolunteering === 1 ? 'year' : 'years'} exp
+        </span>
+      )}
     </div>
   );
 }
 
-// Button Option L: Small Teal (Option H sizing + Option F design)
-function ButtonOptionL({ onClick }) {
+// Badge Option B5: Active + Experience with just text
+function BadgeOptionB5({ volunteer }) {
   return (
-    <div style={{ textAlign: 'center' }}>
-      <button
-        onClick={onClick}
-        style={{
-          padding: '6px 16px',
-          fontSize: '12px',
-          fontWeight: '600',
-          color: 'white',
-          backgroundColor: '#00897B',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s',
-        }}
-        onMouseOver={(e) => e.target.style.backgroundColor = '#00695C'}
-        onMouseOut={(e) => e.target.style.backgroundColor = '#00897B'}
-      >
-        View Profile
-      </button>
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
+      {volunteer.isActive && (
+        <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+          Active
+        </span>
+      )}
+      {volunteer.isActive && volunteer.yearsVolunteering && <span>•</span>}
+      {volunteer.yearsVolunteering && (
+        <span style={{ color: '#888', fontStyle: 'italic' }}>
+          {volunteer.yearsVolunteering}+ years
+        </span>
+      )}
     </div>
   );
 }
 
-// Mini Card Preview Component
-function CardPreview({ buttonComponent, label }) {
-  const ButtonComponent = buttonComponent;
-  
+// Badge Option B6: Active + Experience with diamond
+function BadgeOptionB6({ volunteer }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <div style={{ 
-        fontSize: '14px', 
-        fontWeight: '700', 
-        color: '#1565C0',
-        textAlign: 'center',
-        padding: '8px',
-        backgroundColor: '#E3F2FD',
-        borderRadius: '8px'
-      }}>
-        {label}
-      </div>
-      <Card variant="border" style={{ height: '100%' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
-          <div style={{ 
-            width: '60px', height: '60px', borderRadius: '12px', 
-            backgroundColor: '#E0F7FA', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '30px', flexShrink: 0
-          }}>
-            {sampleVolunteer.icon}
-          </div>
-          <div>
-            <h3 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{sampleVolunteer.name}</h3>
-            <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ color: '#2E7D32', fontWeight: 'bold' }}>✓ Verified</span>
-              <span>•</span>
-              <span style={{ backgroundColor: '#E0F2F1', padding: '2px 8px', borderRadius: '4px', color: '#004D40', fontWeight: '600' }}>
-                {sampleVolunteer.role}
-              </span>
-            </div>
-          </div>
-        </div>
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
+      {volunteer.isActive && (
+        <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+          Active
+        </span>
+      )}
+      {volunteer.isActive && volunteer.yearsVolunteering && <span>•</span>}
+      {volunteer.yearsVolunteering && (
+        <span style={{ color: '#1565C0' }}>
+          ◆ {volunteer.yearsVolunteering} {volunteer.yearsVolunteering === 1 ? 'year' : 'years'}
+        </span>
+      )}
+    </div>
+  );
+}
 
-        {/* Bio */}
-        <p style={{ 
-          margin: '0 0 12px 0', fontSize: '13px', color: '#555', 
-          fontStyle: 'italic', lineHeight: '1.4'
+// Badge Option C: Active status only
+function BadgeOptionC({ volunteer }) {
+  return (
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center' }}>
+      {volunteer.isActive ? (
+        <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+          Active now
+        </span>
+      ) : (
+        <span style={{ color: '#999', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#CCC' }}></span>
+          Away
+        </span>
+      )}
+    </div>
+  );
+}
+
+// Badge Option D: Experience only (as subtle tag)
+function BadgeOptionD({ volunteer }) {
+  return (
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center' }}>
+      {volunteer.yearsVolunteering ? (
+        <span style={{ backgroundColor: '#FFF8E1', padding: '2px 8px', borderRadius: '4px', color: '#F57C00', fontWeight: '500' }}>
+          ⭐ {volunteer.yearsVolunteering} {volunteer.yearsVolunteering === 1 ? 'year' : 'years'} volunteering
+        </span>
+      ) : (
+        <span style={{ backgroundColor: '#E3F2FD', padding: '2px 8px', borderRadius: '4px', color: '#1565C0', fontWeight: '500' }}>
+          🆕 New volunteer
+        </span>
+      )}
+    </div>
+  );
+}
+
+// Badge Option E: Minimal - just active dot, no text
+function BadgeOptionE({ volunteer }) {
+  return (
+    <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center' }}>
+      <span 
+        style={{ 
+          width: '10px', 
+          height: '10px', 
+          borderRadius: '50%', 
+          backgroundColor: volunteer.isActive ? '#4CAF50' : '#CCC',
+          border: '2px solid white',
+          boxShadow: '0 0 0 1px ' + (volunteer.isActive ? '#4CAF50' : '#CCC')
+        }}
+        title={volunteer.isActive ? 'Active' : 'Away'}
+      ></span>
+      {volunteer.yearsVolunteering && (
+        <span style={{ color: '#888', fontSize: '12px' }}>
+          {volunteer.yearsVolunteering}y exp
+        </span>
+      )}
+    </div>
+  );
+}
+
+// Card Preview Component
+function CardPreview({ badgeComponent: BadgeComponent, label, volunteer }) {
+  return (
+    <Card variant="border" style={{ height: '100%' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
+        <div style={{ 
+          width: '60px', height: '60px', borderRadius: '12px', 
+          backgroundColor: '#E0F7FA', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '30px', flexShrink: 0
         }}>
-          "{sampleVolunteer.bio}"
-        </p>
-        
-        {/* Can Help With */}
-        <div style={{ marginBottom: '12px', padding: '10px 12px', backgroundColor: '#F9F9F9', borderRadius: '8px' }}>
-          <p style={{ margin: '0 0 4px 0', fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Can help with</p>
-          <p style={{ margin: 0, fontWeight: '600', fontSize: '13px' }}>{sampleVolunteer.helpsWith.join(', ')}</p>
+          {volunteer.icon}
         </div>
-
-        {/* Languages + Availability */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', fontSize: '12px', color: '#666', flexWrap: 'wrap', gap: '8px' }}>
-          <span>🗣️ {sampleVolunteer.languages.join(', ')}</span>
-          <span>📅 {sampleVolunteer.availability}</span>
+        <div>
+          <h3 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{volunteer.name}</h3>
+          <BadgeComponent volunteer={volunteer} />
         </div>
+      </div>
 
-        {/* Button */}
-        <ButtonComponent onClick={() => {}} />
-      </Card>
-    </div>
+      {/* Bio */}
+      <p style={{ 
+        margin: '0 0 12px 0', fontSize: '13px', color: '#555', 
+        fontStyle: 'italic', lineHeight: '1.4'
+      }}>
+        "{volunteer.bio}"
+      </p>
+      
+      {/* Can Help With */}
+      <div style={{ marginBottom: '12px', padding: '10px 12px', backgroundColor: '#F9F9F9', borderRadius: '8px' }}>
+        <p style={{ margin: '0 0 4px 0', fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Can help with</p>
+        <p style={{ margin: 0, fontWeight: '600', fontSize: '13px' }}>{volunteer.helpsWith.join(', ')}</p>
+      </div>
+
+      {/* Languages + Availability */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', fontSize: '12px', color: '#666', gap: '8px' }}>
+        <span>{volunteer.languages ? `🗣️ ${volunteer.languages.join(', ')}` : '\u00A0'}</span>
+        <span>📅 {volunteer.availability}</span>
+      </div>
+
+      {/* Button */}
+      <div style={{ textAlign: 'center' }}>
+        <button
+          style={{
+            padding: '6px 16px',
+            fontSize: '12px',
+            fontWeight: '600',
+            color: 'white',
+            backgroundColor: '#00897B',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          View Profile
+        </button>
+      </div>
+    </Card>
   );
 }
 
 export default function ButtonDesignOptions() {
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  const options = [
-    { id: 'A', label: 'Option A: Solid Primary', component: ButtonOptionA },
-    { id: 'B', label: 'Option B: Outline', component: ButtonOptionB },
-    { id: 'C', label: 'Option C: Soft/Muted', component: ButtonOptionC },
-    { id: 'D', label: 'Option D: Text Link', component: ButtonOptionD },
-    { id: 'E', label: 'Option E: Pill with Icon', component: ButtonOptionE },
-    { id: 'F', label: 'Option F: Teal Accent', component: ButtonOptionF },
-    { id: 'G', label: 'Option G: Small Text Link', component: ButtonOptionG },
-    { id: 'H', label: 'Option H: Small Outline', component: ButtonOptionH },
-    { id: 'I', label: 'Option I: Small Pill', component: ButtonOptionI },
-    { id: 'J', label: 'Option J: Arrow Link', component: ButtonOptionJ },
-    { id: 'K', label: 'Option K: Small Soft Blue', component: ButtonOptionK },
-    { id: 'L', label: 'Option L: Small Teal', component: ButtonOptionL },
+  const badgeOptions = [
+    { id: 'A', label: 'Current: Verified + Role', component: BadgeOptionA },
+    { id: 'B', label: '★ Star symbol (outline)', component: BadgeOptionB },
+    { id: 'B2', label: '★ Star (gold, shortened)', component: BadgeOptionB2 },
+    { id: 'B3', label: '✦ Four-pointed star', component: BadgeOptionB3 },
+    { id: 'B4', label: '● Dot + "exp"', component: BadgeOptionB4 },
+    { id: 'B5', label: 'Text only (italic)', component: BadgeOptionB5 },
+    { id: 'B6', label: '◆ Diamond (blue)', component: BadgeOptionB6 },
+    { id: 'C', label: 'Active Status Only', component: BadgeOptionC },
+    { id: 'D', label: 'Experience Tag Only', component: BadgeOptionD },
+    { id: 'E', label: 'Minimal (dot + years)', component: BadgeOptionE },
   ];
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#F7F9FC', paddingBottom: '2rem' }}>
-      <Header title="Button Design Options" showBack showHome />
+      <Header title="Badge Design Options" showBack showHome />
       
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '1.5rem' }}>
         
@@ -444,25 +320,44 @@ export default function ButtonDesignOptions() {
           border: '1px solid #FFE0B2'
         }}>
           <p style={{ margin: 0, color: '#E65100', fontSize: '14px' }}>
-            🎨 <strong>Choose a button style:</strong> Review the options below and let me know which "View Profile" button design you prefer!
+            🎨 <strong>Choose a badge style:</strong> Each row shows how the badge looks with 3 different volunteers (with varying data).
+            <br />• Maria: Active + 4 years experience
+            <br />• Raj: Active + no experience shared  
+            <br />• Fatima: Not active + 2 years experience
           </p>
         </div>
 
-        {/* Options Grid - 3 columns */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(3, 1fr)', 
-          gap: '1.5rem',
-          marginBottom: '2rem'
-        }}>
-          {options.map(option => (
-            <CardPreview 
-              key={option.id}
-              label={option.label}
-              buttonComponent={option.component}
-            />
-          ))}
-        </div>
+        {/* Options */}
+        {badgeOptions.map(option => (
+          <div key={option.id} style={{ marginBottom: '2rem' }}>
+            <div style={{ 
+              fontSize: '14px', 
+              fontWeight: '700', 
+              color: '#1565C0',
+              padding: '8px 12px',
+              backgroundColor: '#E3F2FD',
+              borderRadius: '8px',
+              marginBottom: '1rem',
+              display: 'inline-block'
+            }}>
+              Option {option.id}: {option.label}
+            </div>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(3, 1fr)', 
+              gap: '1rem'
+            }}>
+              {sampleVolunteers.map(volunteer => (
+                <CardPreview 
+                  key={volunteer.name}
+                  label={option.label}
+                  badgeComponent={option.component}
+                  volunteer={volunteer}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
 
       </div>
     </div>

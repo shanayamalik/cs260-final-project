@@ -30,16 +30,29 @@ function ExtendedProfileModal({ volunteer, onClose }) {
           <div>
             <h2 style={{ margin: '0 0 4px 0', fontSize: '22px' }}>{volunteer.name}</h2>
             <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
-              {volunteer.verified && <span style={{ color: '#2E7D32', fontWeight: 'bold' }}>✓ Verified</span>}
-              {volunteer.verified && volunteer.role && <span>•</span>}
-              {volunteer.role && (
-                <span style={{ backgroundColor: '#E0F2F1', padding: '2px 8px', borderRadius: '4px', color: '#004D40', fontWeight: '600' }}>
-                  {volunteer.role}
+              {volunteer.isActive && (
+                <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
+                  Active
+                </span>
+              )}
+              {volunteer.isActive && volunteer.yearsVolunteering && <span>•</span>}
+              {volunteer.yearsVolunteering && (
+                <span style={{ color: '#666' }}>
+                  ⭐ {volunteer.yearsVolunteering} {volunteer.yearsVolunteering === 1 ? 'year' : 'years'}
                 </span>
               )}
             </div>
           </div>
         </div>
+
+        {/* Age Range (optional) */}
+        {volunteer.ageRange && (
+          <div style={{ marginBottom: '1.25rem' }}>
+            <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#222', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Age Range</p>
+            <p style={{ margin: 0, fontSize: '14px', color: '#444' }}>🎂 {volunteer.ageRange}</p>
+          </div>
+        )}
 
         {/* About Me */}
         {volunteer.about && (
@@ -85,21 +98,13 @@ function ExtendedProfileModal({ volunteer, onClose }) {
           </div>
         )}
 
-        {/* Availability + Experience row */}
-        <div style={{ display: 'flex', gap: '2rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-          {volunteer.availability && (
-            <div>
-              <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#222', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Availability</p>
-              <p style={{ margin: 0, fontSize: '14px', color: '#444' }}>📅 {volunteer.availability}</p>
-            </div>
-          )}
-          {volunteer.yearsVolunteering && (
-            <div>
-              <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#222', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Experience</p>
-              <p style={{ margin: 0, fontSize: '14px', color: '#444' }}>⭐ {volunteer.yearsVolunteering} years volunteering</p>
-            </div>
-          )}
-        </div>
+        {/* Availability */}
+        {volunteer.availability && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#222', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Availability</p>
+            <p style={{ margin: 0, fontSize: '14px', color: '#444' }}>📅 {volunteer.availability}</p>
+          </div>
+        )}
 
         {/* Action buttons */}
         <div style={{ display: 'flex', gap: '1rem' }}>
