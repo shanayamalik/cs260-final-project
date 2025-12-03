@@ -9,6 +9,8 @@ import VoiceInterviewPage from './pages/VoiceInterviewPage';
 import ProfileCreationPage from './pages/ProfileCreationPage';
 import ButtonDesignOptions from './pages/ButtonDesignOptions';
 import CardLayoutOptions from './pages/CardLayoutOptions';
+import BannerDesignOptions from './pages/BannerDesignOptions';
+import BadgeDesignOptions from './pages/BadgeDesignOptions';
 import './styles/global.css';
 
 function App() {
@@ -26,6 +28,8 @@ function App() {
           <Route path="/profile-creation" element={<ProfileCreationPage />} />
           <Route path="/button-designs" element={<ButtonDesignOptions />} />
           <Route path="/card-layouts" element={<CardLayoutOptions />} />
+          <Route path="/banner-designs" element={<BannerDesignOptions />} />
+          <Route path="/badge-designs" element={<BadgeDesignOptions />} />
         </Routes>
       </div>
     </BrowserRouter>

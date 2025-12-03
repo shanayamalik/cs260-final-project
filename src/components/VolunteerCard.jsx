@@ -54,20 +54,20 @@ export default function VolunteerCard({ volunteer, onViewProfile, selected }) {
         </div>
         <div>
           <h3 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{name}</h3>
-          <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', alignItems: 'center', flexWrap: 'wrap' }}>
-            {isActive && (
-              <span style={{ color: '#2E7D32', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50' }}></span>
-                Active
-              </span>
-            )}
-            {isActive && yearsVolunteering && <span>•</span>}
-            {yearsVolunteering && (
-              <span style={{ color: '#F5A623' }}>
-                ★ {yearsVolunteering}y experience
-              </span>
-            )}
-          </div>
+          <span style={{ 
+            fontSize: '0.6rem', 
+            color: '#059669', 
+            background: '#ecfdf5',
+            border: '1px solid #a7f3d0',
+            borderRadius: '4px',
+            padding: '2px 6px',
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '3px',
+            fontWeight: '500'
+          }}>
+            ✓ Verified
+          </span>
         </div>
       </div>
 

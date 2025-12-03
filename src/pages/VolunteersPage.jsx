@@ -145,17 +145,18 @@ export default function VolunteersPage() {
       
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1.5rem' }}>
         
-        {/* Intro Text */}
-        <div style={{ 
-          backgroundColor: '#E3F2FD', 
-          padding: '1rem 1.5rem', 
-          borderRadius: '12px', 
+        {/* Match Banner */}
+        <div style={{
+          background: 'white',
+          borderRadius: '8px',
+          padding: '0.75rem 1rem',
           marginBottom: '1.5rem',
-          border: '1px solid #BBDEFB'
+          fontSize: '0.85rem',
+          color: '#374151',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+          textAlign: 'center'
         }}>
-          <p style={{ margin: 0, color: '#1565C0', fontSize: '14px' }}>
-            🎉 <strong>Great news!</strong> Based on your profile, we found {mockVolunteers.length} volunteers who match your interests and availability.
-          </p>
+          Good news! We found <span style={{ color: '#0d9488', fontWeight: '600' }}>{mockVolunteers.length}</span> volunteers who match your preferences.
         </div>
 
         {/* Volunteer Cards - Side by Side */}
