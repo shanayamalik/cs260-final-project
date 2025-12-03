@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/common/Header';
 import VolunteerCard from '../components/VolunteerCard';
 import Button from '../components/common/Button';
 import { mockVolunteers } from '../data/mockVolunteers';
+import { matchVolunteers, matchVolunteersSoft } from '../utils/matching';
 
 // Extended Profile Modal Component
 function ExtendedProfileModal({ volunteer, onClose }) {
@@ -146,6 +147,38 @@ function ExtendedProfileModal({ volunteer, onClose }) {
 export default function VolunteersPage() {
   const [selectedVolunteerId, setSelectedVolunteerId] = useState(null);
   const [profileVolunteer, setProfileVolunteer] = useState(null);
+  const [matchedVolunteers, setMatchedVolunteers] = useState([]);
+  const [matchType, setMatchType] = useState('hard'); // 'hard' or 'soft'
+
+  useEffect(() => {
+    // Get user profile from localStorage
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const profile = user.profile || {};
+
+    // Try hard matching first (requires help + availability overlap)
+    let matches = matchVolunteers(mockVolunteers, profile, {
+      requireHelpMatch: true,
+      requireAvailabilityMatch: true,
+      maxResults: 3
+    });
+
+    // If no hard matches, fall back to soft matching
+    if (matches.length === 0) {
+      matches = matchVolunteersSoft(mockVolunteers, profile, {
+        maxResults: 3
+      });
+      setMatchType('soft');
+    } else {
+      setMatchType('hard');
+    }
+
+    // If still no matches (shouldn't happen with soft), show top 3
+    if (matches.length === 0) {
+      matches = mockVolunteers.slice(0, 3);
+    }
+
+    setMatchedVolunteers(matches);
+  }, []);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#F7F9FC', paddingBottom: '2rem' }}>
@@ -164,7 +197,7 @@ export default function VolunteersPage() {
           boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
           textAlign: 'center'
         }}>
-          Good news! We found <span style={{ color: '#0d9488', fontWeight: '600' }}>{mockVolunteers.length}</span> volunteers who match your preferences.
+          Good news! We found <span style={{ color: '#0d9488', fontWeight: '600' }}>{matchedVolunteers.length}</span> volunteer{matchedVolunteers.length !== 1 ? 's' : ''} who match{matchedVolunteers.length === 1 ? 'es' : ''} your preferences.
         </div>
 
         {/* Volunteer Cards - Side by Side */}
@@ -173,7 +206,7 @@ export default function VolunteersPage() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
           gap: '1.5rem' 
         }}>
-          {mockVolunteers.map(volunteer => (
+          {matchedVolunteers.map(volunteer => (
             <VolunteerCard
               key={volunteer.id}
               volunteer={volunteer}
@@ -184,7 +217,7 @@ export default function VolunteersPage() {
         </div>
 
         {/* Empty State (if no volunteers) */}
-        {mockVolunteers.length === 0 && (
+        {matchedVolunteers.length === 0 && (
           <div style={{ textAlign: 'center', color: '#666', padding: '3rem' }}>
             <p style={{ fontSize: '48px', marginBottom: '1rem' }}>🔍</p>
             <p>No volunteers found. Complete your profile to see matches!</p>

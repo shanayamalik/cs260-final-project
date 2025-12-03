@@ -226,8 +226,8 @@ export default function ProfileCreationPage() {
       // Update local storage with the updated user object from server
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // Navigate to dashboard
-      navigate('/dashboard');
+      // Navigate to volunteers page to see matches
+      navigate('/volunteers');
     } catch (error) {
       console.error("Error saving profile:", error);
       alert("Failed to save profile. Please try again.");
