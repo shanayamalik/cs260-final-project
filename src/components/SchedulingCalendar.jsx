@@ -154,21 +154,24 @@ export default function SchedulingCalendar({
 
   return (
     <div>
-      {/* Optional "Back" control */}
+      {/* go back */}
       {onBack && (
         <button
           type="button"
           onClick={onBack}
           style={{
-            marginBottom: "1rem",
-            border: "none",
-            background: "transparent",
-            textDecoration: "underline",
+            position: "absolute",
+            top: 10,
+            left: 10,
+            fontSize: 18,
+            padding: "6px 10px",
+            borderRadius: 8,
+            border: "1px solid #155d27",
             cursor: "pointer",
-            fontSize: 14,
+            fontWeight: 600,
           }}
         >
-          ← Back to matches
+          ← Back
         </button>
       )}
 
@@ -215,8 +218,8 @@ export default function SchedulingCalendar({
                   minWidth: 50,
                   padding: "0.5rem",
                   borderRadius: 12,
-                  border: isSelected ? "2px solid #1976d2" : "1px solid #ccc",
-                  backgroundColor: isSelected ? "#E3F2FD" : "#fff",
+                  border: isSelected ? "2px solid #1B5E20" : "1px solid #ccc",
+                  backgroundColor: isSelected ? "#E8F5E9" : "#fff",
                   cursor: "pointer",
                   fontSize: 13,
                   display: "flex",
@@ -281,8 +284,8 @@ export default function SchedulingCalendar({
                     minWidth: 90,
                     padding: "0.5rem 0.75rem",
                     borderRadius: 999,
-                    border: isSelected ? "2px solid #1976d2" : "1px solid #ccc",
-                    backgroundColor: isSelected ? "#E3F2FD" : "#fff",
+                    border: isSelected ? "2px solid #1B5E20" : "1px solid #ccc",
+                    backgroundColor: isSelected ? "#E8F5E9" : "#fff",
                     cursor: "pointer",
                     fontSize: 13,
                     display: "flex",
