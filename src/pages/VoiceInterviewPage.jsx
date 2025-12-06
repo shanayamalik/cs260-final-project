@@ -14,12 +14,35 @@ export default function VoiceInterviewPage() {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [ttsEnabled, setTtsEnabled] = useState(true);
+  const [ttsGreetingSpoken, setTtsGreetingSpoken] = useState(false);
   const endRef = useRef(null);
   const interimTextRef = useRef('');
   const silenceTimerRef = useRef(null);
+  /// for poor vision, use syc audio
+  const speakText = (text) => {
+    if (!text) return;
+  
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      console.warn('Current browser does not support SpeechSynthesis TTS');
+      return;
+    }
+  
+    // Stop any ongoing speech before starting a new one
+    window.speechSynthesis.cancel();
+  
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';   // or 'zh-CN' if you later support Chinese
+    utterance.rate = 0.92;       // speaking rate
+    utterance.pitch = 1.2;      // voice pitch
+    utterance.volume = 0.9;
+    window.speechSynthesis.speak(utterance);
+  };
 
   // --- Progress Logic ---
   const [progress, setProgress] = useState(0);
+  // Speak initial AI greeting once when page loads (for low-vision users)
+  
 
   // Auto-scroll
   useEffect(() => {
@@ -76,58 +99,112 @@ export default function VoiceInterviewPage() {
     }
   };
 
-  // --- AI Integration ---
-  useEffect(() => {
-    const lastMessage = transcript[transcript.length - 1];
-    
-    // Only trigger if the last message was from the user and we aren't already thinking
-    if (lastMessage?.speaker === 'user' && !isProcessing) {
+    // --- AI Integration ---
+    useEffect(() => {
+      const lastMessage = transcript[transcript.length - 1];
+  
+      // Only trigger if the last message was from the user
+      if (!lastMessage || lastMessage.speaker !== 'user') {
+        return;
+      }
+  
+      let cancelled = false;
+  
       const fetchAIResponse = async () => {
         setIsProcessing(true);
         try {
-          // Convert transcript to OpenAI format
+          // Convert transcript to OpenAI / backend format
           const apiMessages = transcript.map(t => ({
             role: t.speaker === 'user' ? 'user' : 'assistant',
             content: t.text
           }));
-
+  
           const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ messages: apiMessages })
           });
-
+  
+          if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`Chat API error: ${response.status} ${response.statusText} - ${text}`);
+          }
+  
           const data = await response.json();
-          
-          if (data.message) {
-            setTranscript(prev => [...prev, {
-              text: data.message,
+          console.log('chat response:', data);
+  
+          if (cancelled) return;
+  
+          // Try multiple possible fields for the AI text
+          const aiText =
+            data.message ||
+            data.reply ||
+            data.content ||
+            (data.choices && data.choices[0]?.message?.content) ||
+            '';
+  
+          if (!aiText) {
+            console.warn('No AI text found in /api/chat response');
+            
+            setTranscript(prev => [
+              ...prev,
+              {
+                text: 'Sorry, I could not understand the response from the server.',
+                speaker: 'ai',
+                timestamp: new Date().toISOString(),
+                highlights: []
+              }
+            ]);
+            return;
+          }
+  
+          // Append AI message to transcript
+          setTranscript(prev => [
+            ...prev,
+            {
+              text: aiText,
               speaker: 'ai',
               timestamp: new Date().toISOString(),
               highlights: [] // add extraction logic later
-            }]);
-            
-            // Update progress from backend analysis
-            if (typeof data.progress === 'number') {
-              setProgress(prev => Math.max(prev, data.progress));
             }
-
-            // TODO: (optional?) Text-to-Speech (TTS)
-            // Implement window.speechSynthesis here to read 'data.message' aloud.
-            // Ensure to handle voice selection (friendly tone) and visual sync.
+          ]);
+  
+          // Update progress from backend if provided
+          if (typeof data.progress === 'number') {
+            setProgress(prev => Math.max(prev, data.progress));
+          }
+  
+          // 🔊 Text-to-Speech for low-vision users
+          if (ttsEnabled) {
+            speakText(aiText);
           }
         } catch (error) {
-          console.error("Error fetching AI response:", error);
-          // Optional: Add an error message to the chat
+          console.error('Error fetching AI response:', error);
+         
+          setTranscript(prev => [
+            ...prev,
+            {
+              text: 'There was an error contacting the AI. Please try speaking again.',
+              speaker: 'ai',
+              timestamp: new Date().toISOString(),
+              highlights: []
+            }
+          ]);
         } finally {
-          setIsProcessing(false);
+          if (!cancelled) {
+            setIsProcessing(false);
+          }
         }
       };
-
+  
       fetchAIResponse();
-    }
-  }, [transcript]);
-
+  
+      // Cleanup in case component unmounts while the request is in-flight
+      return () => {
+        cancelled = true;
+      };
+  
+    }, [transcript, ttsEnabled]);
   // Real Speech Recognition Logic
   const recognitionRef = useRef(null);
 
@@ -139,29 +216,37 @@ export default function VoiceInterviewPage() {
       recognition.interimResults = true;
       recognition.lang = 'en-US';
 
+      // 🔊 After user allows microphone & recognition really starts, play the first AI greeting once
+      recognition.onstart = () => {
+        if (
+          ttsEnabled &&
+          !ttsGreetingSpoken &&
+          transcript.length > 0 &&
+          transcript[0].speaker === 'ai'
+        ) {
+          speakText(transcript[0].text);
+          setTtsGreetingSpoken(true);
+        }
+      };
+
       recognition.onresult = (event) => {
         let fullTranscript = '';
-        
-        // Accumulate all results from the current session
         for (let i = 0; i < event.results.length; ++i) {
           fullTranscript += event.results[i][0].transcript;
         }
-        
         setInterimText(fullTranscript);
         interimTextRef.current = fullTranscript;
 
-        // Reset silence timer on every new result
         if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
         silenceTimerRef.current = setTimeout(() => {
-          recognition.stop(); // This triggers onend
-        }, 1500); // 1.5 seconds of silence
+          recognition.stop();
+        }, 1500);
       };
 
       recognition.onend = () => {
         setIsListening(false);
         if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
 
-        // Commit the text when recognition stops (either manually or via timer)
         const finalText = interimTextRef.current;
         if (finalText.trim()) {
           setTranscript(prev => [...prev, { 
@@ -184,11 +269,10 @@ export default function VoiceInterviewPage() {
       alert("Speech Recognition not supported in this browser.");
       return;
     }
-
+  
     if (isListening) {
       // Manual Stop
       recognitionRef.current.stop();
-      // onend will handle the state update and text commit
     } else {
       // Start
       try {
@@ -256,7 +340,27 @@ export default function VoiceInterviewPage() {
   return (
     <div className="voice-interview-page" style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-background)' }}>
       <Header title="Voice Interview" showBack showHome />
-      
+          {/* Accessibility settings for visually impaired users */}
+      <div
+        style={{
+          padding: '0.25rem 1rem 0.5rem',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          gap: '0.5rem',
+          fontSize: '12px',
+          color: '#555'
+        }}
+      >
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={ttsEnabled}
+            onChange={(e) => setTtsEnabled(e.target.checked)}
+          />
+          <span>Enable AI voice playback </span>
+        </label>
+      </div>
       <div style={{ flex: 1, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '800px', margin: '0 auto', width: '100%', overflowY: 'auto', paddingBottom: '120px' }}>
         {transcript.map((t, i) => (
           <div key={i} style={{
