@@ -49,6 +49,9 @@ export default function VoiceInterviewPage() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [transcript, interimText, isProcessing]);
 
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [transcript, interimText, isProcessing]);
   // --- Analysis & Finish ---
   const handleFinishInterview = async () => {
     if (transcript.length < 2) {
@@ -216,19 +219,6 @@ export default function VoiceInterviewPage() {
       recognition.interimResults = true;
       recognition.lang = 'en-US';
 
-      // 🔊 After user allows microphone & recognition really starts, play the first AI greeting once
-      recognition.onstart = () => {
-        if (
-          ttsEnabled &&
-          !ttsGreetingSpoken &&
-          transcript.length > 0 &&
-          transcript[0].speaker === 'ai'
-        ) {
-          speakText(transcript[0].text);
-          setTtsGreetingSpoken(true);
-        }
-      };
-
       recognition.onresult = (event) => {
         let fullTranscript = '';
         for (let i = 0; i < event.results.length; ++i) {
@@ -341,6 +331,41 @@ export default function VoiceInterviewPage() {
     <div className="voice-interview-page" style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-background)' }}>
       <Header title="Voice Interview" showBack showHome />
           {/* Accessibility settings for visually impaired users */}
+          {/* --- Start Interview Button (Needed for Chrome TTS Autoplay) --- */}
+        <div style={{ padding: '1rem', textAlign: 'center' }}>
+          <button
+            onClick={() => {
+              // Speak initial greeting inside a user gesture (Chrome allows this)
+              if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(
+                  "Hi! I'm here to help match you with the right volunteer. Tell me a little about what you enjoy doing."
+                );
+                utterance.lang = 'en-US';
+                utterance.rate = 0.92;
+                utterance.pitch = 1.2;
+                utterance.volume = 0.9;
+
+                window.speechSynthesis.speak(utterance);
+              }
+
+              // Mark greeting as spoken (so it won't repeat)
+              setTtsGreetingSpoken(true);
+            }}
+            style={{
+              padding: "12px 24px",
+              borderRadius: "8px",
+              backgroundColor: "var(--color-secondary)",
+              fontWeight: "600",
+              border: "none",
+              cursor: "pointer",
+              marginBottom: "1rem"
+            }}
+          >
+            Start Interview (Click to Hear First Question)
+          </button>
+        </div>
       <div
         style={{
           padding: '0.25rem 1rem 0.5rem',
