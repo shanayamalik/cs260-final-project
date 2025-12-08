@@ -4,7 +4,7 @@ Track your progress as you build the app! Check off items as you complete them.
 
 ---
 
-## Phase 1: Foundation (Days 1-2) - MUST DO FIRST
+## Phase 1: Foundation 
 
 ### Project Setup & Routing
 - [x] Run `npm install` to install all dependencies
@@ -34,40 +34,42 @@ Track your progress as you build the app! Check off items as you complete them.
 - [x] Build `src/components/common/Card.jsx`
   - [x] Props: children, title, onClick, hoverable
   - [x] Consistent padding, rounded corners, shadow
-- [ ] Build `src/components/common/Header.jsx`
-  - [ ] Props: title, showBack, showHome
-  - [ ] Navigation buttons with icons
-  - [ ] Responsive layout
+- [x] Build `src/components/common/Header.jsx`
+  - [x] Props: title, showBack, showHome
+  - [x] Navigation buttons with icons (← Back, 🏠 Home)
+  - [x] Responsive layout with flexbox
+  - [x] User avatar display when logged in
 
 ### Mock Data & Utilities
-- [ ] Populate `src/data/mockVolunteers.js`
-  - [ ] Create 15-20 diverse volunteer objects
-  - [ ] Include: id, name, photo, age, location, interests, communicationStyle, bio, verified, availability
-  - [ ] Vary interests, ages (50-80), communication styles
+- [x] Populate `src/data/mockVolunteers.js`
+  - [x] Create 15 diverse volunteer objects
+  - [x] Include: id, name, icon, role, interests, helpsWith, bio, availability, languages, skills, about
+  - [x] Culturally diverse profiles with varied backgrounds
 - [ ] Implement `src/utils/localStorage.js`
   - [ ] `saveUser(user)` / `getUser()`
   - [ ] `savePreferences(preferences)` / `getPreferences()`
   - [ ] `saveInterests(interests)` / `getInterests()`
   - [ ] `saveScheduledChat(chat)` / `getScheduledChats()`
   - [ ] `clearAllData()`
-- [ ] Implement `src/utils/matching.js`
-  - [ ] `matchVolunteers(volunteers, preferences)` function
-  - [ ] Score volunteers based on preferences
-  - [ ] Filter and sort by match score
-  - [ ] Return top matches
+- [x] Implement `src/utils/matching.js`
+  - [x] `matchVolunteers(volunteers, preferences)` function
+  - [x] Hard filters: helpNeeded ↔ helpsWith, availability overlap
+  - [x] Soft scoring: shared interests, languages, help depth (0-100)
+  - [x] `matchVolunteersSoft()` fallback function
+  - [x] Filter, sort by score, return top 3 matches
 
 **Checkpoint:** ✅ App runs, pages navigate, components render, mock data loads
 
 ---
 
-## Phase 2: Easy Task + Authentication (Days 3-4)
+## Phase 2: Easy Task + Authentication 
 
 ### Easy Task - PreferencesPage
-- [x] Implement `src/components/HelpTypeTiles.jsx`
-  - [x] Display 3 large tiles: Conversation, Hobby Buddy, Tech Help
-  - [x] Use icons from `public/icons/`
-  - [x] Highlight selected tile
-  - [x] Props: onSelect, selectedType
+- [ ] Implement `src/components/HelpTypeTiles.jsx`
+  - [ ] Display 3 large tiles: Conversation, Hobby Buddy, Tech Help
+  - [ ] Use icons from `public/icons/`
+  - [ ] Highlight selected tile
+  - [ ] Props: onSelect, selectedType
 - [ ] Implement `src/components/PreferenceSelector.jsx`
   - [ ] 3 preference options: Communication Style, Location, Age
   - [ ] Large toggles or sliders
@@ -79,38 +81,49 @@ Track your progress as you build the app! Check off items as you complete them.
 - [ ] Test complete Easy Task flow
 
 ### Authentication & Home
-- [ ] Implement `src/pages/LoginPage.jsx`
-  - [ ] Email and password input fields (large, accessible)
-  - [ ] "Log In" button
-  - [ ] Save user to localStorage on login
-  - [ ] Navigate to /home after login
-  - [ ] (Optional) Simple validation
+- [x] Implement `src/pages/LoginPage.jsx`
+  - [x] Email and password input fields (large, accessible)
+  - [x] "Log In" button
+  - [x] Save user to localStorage on login (Mocked)
+  - [x] Navigate to /volunteers after login
+  - [x] (Optional) Simple validation
+  - [x] Minimalist design update (Compact mode)
+- [x] Implement `src/pages/SignUpPage.jsx`
+  - [x] Multi-step wizard (Name/Email/Password -> Security Question)
+  - [x] Auto-redirect if already logged in
+  - [ ] **TODO:** Add User Role selection (Volunteer / Senior / Both)
+- [x] Implement `src/pages/ForgotPasswordPage.jsx`
+  - [x] Email lookup
+  - [x] Security question verification
+  - [x] Password reset
 - [x] Implement `src/pages/HomePage.jsx`
-  - [x] Welcome message with user's name
-  - [ ] 3 large action buttons:
-    - [ ] "Set My Preferences" → /preferences
-    - [ ] "Find Volunteers" → /volunteers
-    - [ ] "AI Interview" → /interview
-  - [ ] Use Header component (no back button)
-- [ ] Test login → home → navigation flow
+  - [x] Welcome message
+  - [x] "How it Works" section
+  - [x] Navigation to Login/Sign Up
+  - [x] Use Header component (Custom nav implemented)
+  - [x] Logged-in state (Sign Out button)
+- [x] Test login → home → navigation flow
 
 ### Backend Setup
 - [x] Implement `server/index.js`
   - [x] Set up Express with cors and body-parser
   - [x] In-memory storage (users array, chats array)
-  - [ ] POST /api/auth/register endpoint
-  - [ ] POST /api/auth/login endpoint
+  - [x] POST /api/auth/register endpoint
+  - [x] POST /api/auth/login endpoint
+  - [x] GET /api/auth/security-question endpoint
+  - [x] POST /api/auth/reset-password endpoint
+  - [x] Persist users to `server/data/users.json`
   - [ ] PUT /api/users/:id/preferences endpoint
   - [ ] GET /api/users/:id endpoint
 - [ ] Test backend with Postman/Thunder Client
 - [x] Run server with `npm run server`
-- [ ] Test frontend calling backend APIs
+- [x] Test frontend calling backend APIs
 
 **Checkpoint:** ✅ User can log in, set preferences, save to backend
 
 ---
 
-## Phase 3: Medium Task - VolunteersPage (Days 5-7)
+## Phase 3: Medium Task - VolunteersPage 
 
 ### Person 1: Volunteer Display Components
 - [x] Implement `src/components/VolunteerCard.jsx`
@@ -148,71 +161,90 @@ Track your progress as you build the app! Check off items as you complete them.
 - [x] Add backend endpoint: POST /api/chats
 - [x] Add backend endpoint: GET /api/chats/user/:userId
 - [x] Test complete Medium Task flow (preferences → volunteers → schedule)
+  - [x] Props: volunteer, onClick, selected, onViewProfile
+  - [x] Display icon, name, verified badge (below name)
+  - [x] Display profession/role tag
+  - [x] Short bio snippet
+  - [x] Shared interests as pill tags
+  - [x] Small teal "View Profile" button
+  - [x] Large, tap-friendly card (Compact Row design)
+- [ ] Test with mock volunteer data
+
+### VolunteersPage Integration
+- [x] Implement `src/pages/VolunteersPage.jsx`
+  - [x] Load user profile from localStorage
+  - [x] Filter volunteers using matching algorithm
+  - [x] Display top 3 matches (ranked by score)
+  - [x] Fall back to soft matching if no hard matches
+  - [x] Extended profile modal with full volunteer details
+  - [x] "Good news!" banner showing match count
+  - [x] Navigate to volunteers after profile confirmation
+- [ ] Implement `src/components/VolunteerComparison.jsx` (Optional - current card grid works well)
+  - [ ] Props: volunteers (2-3), onSelect, selectedId
+  - [ ] Side-by-side layout (responsive: stack on mobile)
+- [ ] Implement `src/components/SchedulingCalendar.jsx`
+  - [ ] Props: volunteerId, volunteerName, onSchedule, availableSlots
+  - [ ] Simple calendar/date picker (week view)
+  - [ ] Large date buttons (min 50x50px)
+  - [ ] Time slot options (Morning, Afternoon, Evening)
+  - [ ] Confirmation button
+- [ ] Add backend endpoint: POST /api/chats
+- [ ] Add backend endpoint: GET /api/chats/user/:userId
+- [ ] Test complete Medium Task flow (preferences → volunteers → schedule)
 
 **Checkpoint:** ✅ User can browse volunteers, compare, and schedule a chat
 
 ---
 
-## Phase 4: Difficult Task - AI Voice Interview (Days 8-10)
+## Phase 4: Difficult Task - AI Voice Interview 
 
-### Voice Recognition Core
-- [ ] Implement `src/components/VoiceInterview.jsx` (main component)
-  - [ ] Large microphone button (use microphone.svg)
-  - [ ] Integrate Web Speech API (SpeechRecognition)
-  - [ ] Start/stop recording functionality
-  - [ ] State: isListening, transcript, conversationHistory
-  - [ ] Text input fallback option
-  - [ ] Progress indicator
-- [ ] Test voice recording and transcription
-- [ ] Handle browser compatibility (webkit prefix)
+### Step 1: The Conversation (Focus Mode)
+- [x] Implement `src/pages/VoiceInterviewPage.jsx`
+  - [x] Minimalist UI: AI Avatar/Icon + Current Question
+  - [x] Large Microphone Button (Start/Stop)
+  - [x] Live Transcript Display (Large, readable text)
+  - [x] Real-time Speech-to-Text using Web Speech API
 
-### Live Display Components
-- [ ] Implement `src/components/LiveTranscription.jsx`
-  - [ ] Props: transcript (array), isListening
-  - [ ] Display real-time speech-to-text
-  - [ ] Color coding by confidence: green (>0.8), yellow (0.5-0.8), red (<0.5)
-  - [ ] Auto-scroll to latest
-  - [ ] Different styling for user vs AI speech
-- [ ] Implement `src/components/ProfileTagsLive.jsx`
-  - [ ] Props: tags (array), onRemove
-  - [ ] Display extracted preferences as tags
-  - [ ] Animate new tags (fade-in)
-  - [ ] Group by category: interests, communication, availability
-  - [ ] Color-code by category
-- [ ] Test live updates and animations
+### Step 2: AI Intelligence & Backend
+- [ ] **TODO: MINGHUI & CARRIE** - Create your own OpenAI API Key and add it to your local `.env` file (`OPENAI_API_KEY=sk-...`)
+- [x] Implement `server/index.js` endpoints
+  - [x] `POST /api/chat`: Handles conversation turn with OpenAI
+  - [x] `POST /api/analyze-interview`: Generates profile JSON and Markdown summary
+- [x] **Privacy Filter**: (Basic implementation via system prompt instructions)
 
-### AI Integration & Error Handling
-- [ ] Implement `src/components/ErrorRecovery.jsx`
-  - [ ] Props: errorType, originalText, suggestions, onCorrect, onSkip
-  - [ ] "Did you mean...?" interface
-  - [ ] Display original text + suggestions
-  - [ ] Undo/retry options
-  - [ ] Text input fallback
-- [ ] Add OpenAI integration in `server/index.js`
-  - [ ] Install openai package
-  - [ ] POST /api/ai/chat endpoint
-  - [ ] Send user message + conversation history to OpenAI
-  - [ ] Extract interests/preferences from AI response
-  - [ ] Return AI question + extracted data
-- [ ] Add backend endpoint: PUT /api/users/:id/interests
-- [ ] Test AI conversation flow
+### Step 3: The Handover & Profile Creation
+- [x] Implement `src/pages/ProfileCreationPage.jsx`
+  - [x] "Subtle Pastel" Design (Option K)
+  - [x] Auto-fill Bio, Interests, and Availability from Interview Data
+  - [x] Editable fields for user refinement
+  - [x] Categorized Interest Selection Modal
+- [x] Connect Interview to Profile
+  - [x] Auto-navigation after interview finishes
+  - [x] Pass analysis data via React Router state
+- [x] PDF Summary Download
+  - [x] Generate `interview_summary.pdf` on client-side
+  - [x] "Interview Notes" button next to Bio header
+
+### Remaining Tasks
+- [x] **Data Persistence:** Implement "Save Profile" on `ProfileCreationPage.jsx`
+  - [x] Create backend endpoint `POST /api/users/profile`
+  - [x] Save final profile data to `users.json` or database
+- [ ] **Validation:** Ensure required fields (About Me, Interests) are filled before saving
+- [ ] **UX Improvements:**
+  - [ ] Add full-screen loading overlay during AI analysis
+  - [ ] Improve "About Me" generation (more robust bio)
+- [ ] **Optional:** Text-to-Speech (TTS) for AI responses
+- [ ] **Optional:** "Flying Chips" animation for keyword extraction
 
 ### Integration & Testing
-- [ ] Integrate all voice components in VoiceInterviewPage
-- [ ] Implement `src/pages/VoiceInterviewPage.jsx`
-  - [ ] Use VoiceInterview component
-  - [ ] Handle completion (save interests to backend)
-  - [ ] Navigate to /home or summary screen
-- [ ] Test full AI interview flow:
-  - [ ] Start interview
-  - [ ] Speak or type responses
-  - [ ] See live transcription
-  - [ ] See tags appear in real-time
-  - [ ] Handle errors/corrections
-  - [ ] Complete and save interests
-- [ ] Test without OpenAI API (mock responses) as fallback
+- [x] Integrate all components in `src/pages/VoiceInterviewPage.jsx`
+- [x] Test full flow:
+  - [x] Start interview -> Speak -> See Transcript
+  - [x] Finish -> Auto-redirect to Profile
+  - [x] View pre-filled data -> Edit -> Download PDF
+  - [x] Save Profile (currently to localStorage)
 
-**Checkpoint:** ✅ AI voice interview works, extracts interests, updates profile
+**Checkpoint:** ✅ AI voice interview works, extracts interests, updates profile safely
 
 ---
 
@@ -228,21 +260,6 @@ Track your progress as you build the app! Check off items as you complete them.
   - [ ] Profile completeness indicator (optional)
 - [ ] Test dashboard with mock scheduled chats
 - [ ] Add navigation from all tasks to dashboard
-
-### Accessibility Features
-- [ ] Add text size controls (A / A+)
-  - [ ] Toggle buttons to increase/decrease font size
-  - [ ] Save preference to localStorage
-  - [ ] Apply to entire app
-- [ ] Implement high contrast mode toggle
-  - [ ] Add [data-theme="high-contrast"] styles in variables.css
-  - [ ] Toggle button in header or settings
-- [ ] Accessibility audit:
-  - [ ] Test keyboard navigation (Tab, Enter, Escape)
-  - [ ] Verify all interactive elements are focusable
-  - [ ] Check ARIA labels on all buttons/inputs
-  - [ ] Test with screen reader (VoiceOver/NVDA)
-  - [ ] Verify color contrast ratios (WCAG AA)
 
 ### Error States & Edge Cases
 - [ ] Add loading states
@@ -267,7 +284,7 @@ Track your progress as you build the app! Check off items as you complete them.
 
 ---
 
-## Phase 6: Final Integration & Deployment (Days 13-14)
+## Phase 6: Final Integration & Deployment 
 
 ### All Together
 - [ ] **End-to-End Testing**
@@ -313,25 +330,89 @@ Track your progress as you build the app! Check off items as you complete them.
 ## Optional Enhancements (If Time Permits)
 
 - [ ] Add user profile editing page
-- [ ] Add chat rescheduling/cancellation
 - [ ] Add post-chat feedback/rating
 - [ ] Add volunteer favorites feature
 - [ ] Add tutorial/onboarding for first-time users
-- [ ] Add animations and transitions
-- [ ] Improve error messages with recovery suggestions
 - [ ] Add help tooltips throughout app
-- [ ] Implement actual video/audio call integration
-- [ ] Add email notifications (if using backend service)
 
 ---
 
-## Notes & Blockers
+## 🎨 Surprising & Delightful Elements (TA Feedback)
 
-**Blocked Items:**
-<!-- Use this section to note anything blocking progress -->
+Add unexpected touches that make the app memorable and stand out:
 
-**Questions/Decisions:**
-<!-- Use this section for team discussion items -->
+### Micro-interactions & Animations
+- [ ] Confetti or celebration animation when matched with volunteers
+- [ ] Smooth card flip animation when viewing volunteer profiles
+- [ ] Gentle pulse animation on microphone during voice interview
+- [ ] "Typing indicator" dots when AI is processing response
+- [ ] Success checkmark animation after saving profile
+- [ ] Floating hearts/stars when selecting interests
 
-**Bugs to Fix:**
-<!-- Track bugs here as you find them -->
+### Personality & Warmth
+- [ ] Personalized greeting using user's name throughout the app
+- [ ] Friendly loading messages ("Finding your perfect match...", "Almost there!")
+- [ ] Encouraging messages during voice interview ("Great answer!", "Tell me more!")
+- [ ] Fun facts or tips while waiting for AI responses
+- [ ] Seasonal themes or greetings (holiday decorations, etc.)
+
+### Unexpected Features
+- [ ] "Meet Your Match" reveal animation (like opening an envelope)
+- [ ] Sound effects (optional, with toggle) for key actions
+- [ ] Easter egg: special response if user says something funny in interview
+- [ ] Daily inspiration quote on dashboard
+- [ ] Progress celebration milestones ("You've completed your profile!")
+
+### Gamification (Light)
+- [ ] Profile completeness meter with encouraging messages
+- [ ] "Badges" for completing different sections
+- [ ] Streak tracking for regular app usage
+
+---
+
+## ♿ Accessibility Enhancements (TA Feedback)
+
+Ensure the app is usable by everyone, especially seniors with varying abilities:
+
+### Visual Accessibility
+- [ ] High contrast mode toggle
+- [ ] Font size adjustment controls (Small / Medium / Large / Extra Large)
+- [ ] Ensure all text meets WCAG AA contrast ratio (4.5:1)
+- [ ] Avoid color-only indicators (add icons/text alongside)
+- [ ] Clear focus indicators on all interactive elements
+- [ ] Reduce motion option for users sensitive to animations
+
+### Screen Reader Support
+- [ ] Add proper ARIA labels to all buttons and interactive elements
+- [ ] Use semantic HTML (header, main, nav, section, article)
+- [ ] Announce dynamic content changes (live regions)
+- [ ] Ensure modals trap focus and are properly labeled
+- [ ] Test with VoiceOver (Mac) and NVDA (Windows)
+
+### Motor Accessibility
+- [ ] Ensure all interactive elements are at least 44x44px
+- [ ] Add keyboard shortcuts for common actions
+- [ ] Full keyboard navigation support (Tab, Enter, Escape)
+- [ ] Skip-to-content link for keyboard users
+- [ ] Avoid time-limited interactions
+
+### Cognitive Accessibility
+- [ ] Simple, clear language throughout
+- [ ] Consistent navigation and layout
+- [ ] Clear error messages with suggestions
+- [ ] Progress indicators for multi-step processes
+- [ ] Undo/back options at every step
+- [ ] Memory aids (show previous answers, recap screens)
+
+### Audio Accessibility
+- [ ] Captions/transcripts for any audio content
+- [ ] Visual feedback for voice recording status
+- [ ] Alternative text input option for voice interview
+- [ ] Volume controls for any sounds/speech
+
+### Testing
+- [ ] Test with actual seniors (user testing)
+- [ ] Use Lighthouse accessibility audit
+- [ ] Test with browser zoom at 200%
+- [ ] Test with system font size increased
+- [ ] Verify color blind friendly (use simulator tools)

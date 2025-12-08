@@ -1,35 +1,5 @@
-// TODO: Create VolunteerCard component for MEDIUM TASK
-//
-// Props to implement:
-// - volunteer: object with volunteer data
-//   {
-//     id, name, photo, interests[], communicationStyle,
-//     location, age, verified, bio, matchScore
-//   }
-// - onClick: click handler (for viewing details)
-// - selected: boolean (highlight if selected for comparison)
-// - compact: boolean (smaller version for side-by-side)
-//
-// Features:
-// - Display volunteer photo (or placeholder)
-// - Name in large, readable font
-// - Verified badge (use verified-badge.svg) if volunteer.verified
-// - Show 2-3 top matching interests as badges/chips
-// - Communication style indicator
-// - Optional match score percentage
-// - Large tap target for entire card
-//
-// Accessibility:
-// - ARIA labels for screen readers
-// - Clear focus states
-// - Alt text for images
-//
-// Example usage:
-// <VolunteerCard 
-//   volunteer={volunteerData}
-//   onClick={() => viewDetails(volunteer.id)}
-//   selected={false}
-// />
+import React from 'react';
+import Card from './common/Card';
 
 // export default function VolunteerCard() {
 //   return null;
@@ -311,5 +281,127 @@ export default function VolunteerCard({
         </div>
       </div>
     </article>
+  );
+}
+/**
+ * VolunteerCard Component
+ * Displays volunteer information in the "Compact Row" style.
+ * 
+ * Shows: Name, icon, verified badge, shared interests,
+ *        "Can help with", languages, and availability.
+ * 
+ * Extended profile (modal) shows: Full about me, skills list,
+ *        detailed availability, age range.
+ * 
+ * @param {Object} props
+ * @param {Object} props.volunteer - Volunteer data object
+ * @param {function} props.onViewProfile - Handler for "View Profile" button
+ * @param {boolean} props.selected - Whether the card is selected
+ */
+export default function VolunteerCard({ volunteer, onViewProfile, selected }) {
+  if (!volunteer) return null;
+
+  const { 
+    name, 
+    icon,
+    sharedInterests = [],
+    helpsWith = [],
+    languages = [],
+    availability
+  } = volunteer;
+
+  return (
+    <Card 
+      variant="border" 
+      hoverable 
+      hoverEffect="glow"
+      style={{ 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column',
+        border: selected ? '2px solid #1565C0' : undefined,
+        backgroundColor: selected ? '#F5F9FF' : undefined
+      }}
+    >
+      {/* Header: Icon + Name + Status/Experience */}
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
+        <div style={{ 
+          width: '60px', height: '60px', borderRadius: '12px', 
+          backgroundColor: '#E0F7FA', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '30px', flexShrink: 0
+        }}>
+          {icon || '👤'}
+        </div>
+        <div>
+          <h3 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{name}</h3>
+          <span style={{ 
+            fontSize: '0.6rem', 
+            color: '#059669', 
+            background: '#ecfdf5',
+            border: '1px solid #a7f3d0',
+            borderRadius: '4px',
+            padding: '2px 6px',
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '3px',
+            fontWeight: '500'
+          }}>
+            ✓ Verified
+          </span>
+        </div>
+      </div>
+
+      {/* Shared interests - small tags */}
+      {sharedInterests.length > 0 && (
+        <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ fontSize: '11px', color: '#888' }}>In common:</span>
+          {sharedInterests.map((interest, i) => (
+            <span key={i} style={{ fontSize: '11px', padding: '3px 8px', backgroundColor: '#F0F0F0', borderRadius: '12px', color: '#555' }}>
+              {interest}
+            </span>
+          ))}
+        </div>
+      )}
+      
+      {/* Can Help With */}
+      {helpsWith.length > 0 && (
+        <div style={{ marginBottom: '12px', padding: '10px 12px', backgroundColor: '#F9F9F9', borderRadius: '8px' }}>
+          <p style={{ margin: '0 0 4px 0', fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Can help with</p>
+          <p style={{ margin: 0, fontWeight: '600', fontSize: '13px' }}>{helpsWith.join(', ')}</p>
+        </div>
+      )}
+
+      {/* Languages + Availability row - fixed positions */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', fontSize: '12px', color: '#666', gap: '8px' }}>
+        <span style={{ minWidth: '40%' }}>
+          {languages.length > 0 ? `🗣️ ${languages.join(', ')}` : '\u00A0'}
+        </span>
+        <span>
+          {availability ? `📅 ${availability}` : '\u00A0'}
+        </span>
+      </div>
+
+      {/* View Profile Button - Small Teal Style */}
+      <div style={{ marginTop: 'auto', textAlign: 'center' }}>
+        <button
+          onClick={onViewProfile}
+          style={{
+            padding: '6px 16px',
+            fontSize: '12px',
+            fontWeight: '600',
+            color: 'white',
+            backgroundColor: '#00897B',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s',
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#00695C'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#00897B'}
+        >
+          View Profile
+        </button>
+      </div>
+    </Card>
   );
 }
