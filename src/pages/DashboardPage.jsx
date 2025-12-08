@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VolunteerCard from '../components/VolunteerCard';
+import SchedulingCalendar from '../components/SchedulingCalendar';
 import { mockVolunteers } from '../data/mockVolunteers';
 import { matchVolunteers } from '../utils/matching';
 
@@ -152,6 +153,13 @@ export default function DashboardPage() {
   const [matches, setMatches] = useState([]);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [profileVolunteer, setProfileVolunteer] = useState(null);
+  
+  // State for unread messages (persisted in localStorage for prototype)
+  const [unreadMessageIds, setUnreadMessageIds] = useState(() => {
+    const saved = localStorage.getItem('unreadMessageIds');
+    // Default to all 4 chat IDs if nothing saved
+    return saved ? JSON.parse(saved) : [14, 15, 101, 13];
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -164,10 +172,34 @@ export default function DashboardPage() {
       return;
     }
 
+    let computedMatches = [];
     if (user.profile) {
-      setMatches(matchVolunteers(mockVolunteers, user.profile, { maxResults: 3 }));
+      computedMatches = matchVolunteers(mockVolunteers, user.profile, { maxResults: 3 });
     }
+
+    // PROTOTYPE: Hardcode Grace (13) and Henry (14) to ensure matches exist for demo
+    const hardcodedIds = ['13', '14'];
+    const hardcodedVolunteers = mockVolunteers.filter(v => hardcodedIds.includes(v.id));
+    
+    // Merge hardcoded with computed, avoiding duplicates
+    const uniqueMatches = [...hardcodedVolunteers];
+    computedMatches.forEach(m => {
+      if (!uniqueMatches.find(existing => existing.id === m.id)) {
+        uniqueMatches.push(m);
+      }
+    });
+
+    setMatches(uniqueMatches);
   }, [user, navigate]);
+
+  // Persist unread messages
+  useEffect(() => {
+    localStorage.setItem('unreadMessageIds', JSON.stringify(unreadMessageIds));
+  }, [unreadMessageIds]);
+
+  const markAsRead = (id) => {
+    setUnreadMessageIds(prev => prev.filter(msgId => msgId !== id));
+  };
 
   const recentChats = [
     { 
@@ -246,7 +278,7 @@ export default function DashboardPage() {
   const StatsSection = () => {
     const stats = [
       { label: 'New Matches', value: matches.length, icon: '🤝' },
-      { label: 'Unread Messages', value: '2', icon: '💬' },
+      { label: 'Unread Messages', value: unreadMessageIds.length, icon: '💬' },
       { label: 'Upcoming Visits', value: '2', icon: '📅' }
     ];
 
@@ -302,12 +334,12 @@ export default function DashboardPage() {
       </div>
       <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
         {recentChats.map((chat, i) => {
-          // Default unread: Henry (14) and Patricia (15)
-          const isUnread = chat.id === 14 || chat.id === 15;
+          const isUnread = unreadMessageIds.includes(chat.id);
           
           return (
             <div key={chat.id} 
               onClick={() => {
+                markAsRead(chat.id);
                 navigate(`/chat/${chat.id}`, { state: { volunteer: { name: chat.name, avatar: chat.avatar }, history: chat.history } });
               }}
               style={{ 
@@ -394,10 +426,11 @@ export default function DashboardPage() {
       
       <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
         {recentChats.map((chat, i) => {
-          const isUnread = chat.id === 14 || chat.id === 15;
+          const isUnread = unreadMessageIds.includes(chat.id);
           return (
             <div key={chat.id} 
               onClick={() => {
+                markAsRead(chat.id);
                 navigate(`/chat/${chat.id}`, { state: { volunteer: { name: chat.name, avatar: chat.avatar }, history: chat.history } });
               }}
               style={{ 
@@ -446,42 +479,184 @@ export default function DashboardPage() {
   );
 
   // Schedule View Component
-  const ScheduleView = () => (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '20px', color: '#334155', fontWeight: '600', margin: 0 }}>Upcoming Visits</h2>
-        <button style={{ backgroundColor: '#0d9488', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', fontSize: '13px' }}>
-          + Schedule New
-        </button>
-      </div>
+  const ScheduleView = () => {
+    const [schedulingStep, setSchedulingStep] = useState('list'); // 'list', 'select-volunteer', 'calendar'
+    const [selectedVolunteerForSchedule, setSelectedVolunteerForSchedule] = useState(null);
+    const [editingVisitId, setEditingVisitId] = useState(null);
+
+    // Mock initial visits
+    const [visits, setVisits] = useState([
+      { 
+        id: 1, 
+        volunteerName: 'Grace Okafor', 
+        volunteerId: '13',
+        date: '2025-12-12', 
+        time: '10:00 AM', 
+        activity: 'Coffee & Chat',
+        location: 'At Home',
+        color: 'green'
+      },
+      { 
+        id: 2, 
+        volunteerName: 'Henry Nakamura', 
+        volunteerId: '14',
+        date: '2025-12-15', 
+        time: '2:00 PM', 
+        activity: 'Chess Game',
+        location: 'Community Center',
+        color: 'blue'
+      }
+    ]);
+
+    // Reset state when entering schedule view
+    useEffect(() => {
+      if (activeTab !== 'schedule') {
+        setSchedulingStep('list');
+        setSelectedVolunteerForSchedule(null);
+        setEditingVisitId(null);
+      }
+    }, [activeTab]);
+
+    const handleScheduleConfirm = (slot) => {
+      if (editingVisitId) {
+        // Update existing visit
+        setVisits(prev => prev.map(v => {
+          if (v.id === editingVisitId) {
+            return { ...v, date: slot.date, time: slot.time };
+          }
+          return v;
+        }));
+        alert(`Rescheduled successfully with ${selectedVolunteerForSchedule.name} for ${slot.date} at ${slot.time}!`);
+      } else {
+        // Create new visit
+        const newVisit = {
+          id: Date.now(),
+          volunteerName: selectedVolunteerForSchedule.name,
+          volunteerId: selectedVolunteerForSchedule.id,
+          date: slot.date,
+          time: slot.time,
+          activity: 'New Visit',
+          location: 'TBD',
+          color: 'blue'
+        };
+        setVisits(prev => [...prev, newVisit]);
+        alert(`Scheduled successfully with ${selectedVolunteerForSchedule.name} for ${slot.date} at ${slot.time}!`);
+      }
       
-      <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
-          <div style={{ backgroundColor: '#f0fdf4', color: '#16a34a', padding: '6px 10px', borderRadius: '8px', textAlign: 'center', minWidth: '50px' }}>
-            <div style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>DEC</div>
-            <div style={{ fontSize: '16px', fontWeight: '700', lineHeight: 1 }}>12</div>
+      setSchedulingStep('list');
+      setSelectedVolunteerForSchedule(null);
+      setEditingVisitId(null);
+    };
+
+    if (schedulingStep === 'calendar' && selectedVolunteerForSchedule) {
+      return (
+        <SchedulingCalendar
+          volunteerId={selectedVolunteerForSchedule.id}
+          volunteerName={selectedVolunteerForSchedule.name}
+          onBack={() => {
+            setSchedulingStep('list');
+            setEditingVisitId(null);
+          }}
+          onSchedule={handleScheduleConfirm}
+        />
+      );
+    }
+
+    if (schedulingStep === 'select-volunteer') {
+      return (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
+            <button
+              onClick={() => setSchedulingStep('list')}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#64748b', display: 'flex', alignItems: 'center'
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h2 style={{ fontSize: '20px', color: '#334155', fontWeight: '600', margin: 0 }}>Select a Volunteer</h2>
           </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: '600', color: '#1e293b', marginBottom: '2px', fontSize: '14px' }}>Coffee & Chat with Grace</div>
-            <div style={{ fontSize: '13px', color: '#64748b' }}>10:00 AM - 11:00 AM • At Home</div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+            {matches.map(volunteer => (
+              <div key={volunteer.id} onClick={() => {
+                setSelectedVolunteerForSchedule(volunteer);
+                setEditingVisitId(null); // Ensure we are in "create" mode
+                setSchedulingStep('calendar');
+              }}>
+                <VolunteerCard volunteer={volunteer} />
+              </div>
+            ))}
+            {matches.length === 0 && (
+              <p style={{ color: '#64748b' }}>No matches found yet. Check your matches tab!</p>
+            )}
           </div>
-          <button style={{ color: '#64748b', background: 'none', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Reschedule</button>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '20px', color: '#334155', fontWeight: '600', margin: 0 }}>Upcoming Visits</h2>
+          <button 
+            onClick={() => {
+              setEditingVisitId(null);
+              setSchedulingStep('select-volunteer');
+            }}
+            style={{ backgroundColor: '#0d9488', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', fontSize: '13px' }}>
+            + Schedule New
+          </button>
         </div>
         
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px 16px' }}>
-          <div style={{ backgroundColor: '#eff6ff', color: '#2563eb', padding: '6px 10px', borderRadius: '8px', textAlign: 'center', minWidth: '50px' }}>
-            <div style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>DEC</div>
-            <div style={{ fontSize: '16px', fontWeight: '700', lineHeight: 1 }}>15</div>
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: '600', color: '#1e293b', marginBottom: '2px', fontSize: '14px' }}>Chess Game with Henry</div>
-            <div style={{ fontSize: '13px', color: '#64748b' }}>2:00 PM - 3:30 PM • Community Center</div>
-          </div>
-          <button style={{ color: '#64748b', background: 'none', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Reschedule</button>
+        <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+          {visits.length === 0 && (
+            <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No upcoming visits scheduled.</div>
+          )}
+          
+          {visits.map((visit, index) => {
+            // Helper to format date for the badge
+            const dateObj = new Date(visit.date);
+            const month = dateObj.toLocaleString('default', { month: 'short' });
+            const day = dateObj.getDate() + 1; // Fix timezone offset issue for simple date strings if needed, or just parse string
+            // Simple parse for YYYY-MM-DD
+            const [y, m, d] = visit.date.split('-').map(Number);
+            const dateDate = new Date(y, m - 1, d);
+            const monthStr = dateDate.toLocaleString('default', { month: 'short' });
+            const dayStr = dateDate.getDate();
+
+            const isGreen = visit.color === 'green';
+            const badgeBg = isGreen ? '#f0fdf4' : '#eff6ff';
+            const badgeColor = isGreen ? '#16a34a' : '#2563eb';
+
+            return (
+              <div key={visit.id} style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px 16px', borderBottom: index !== visits.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                <div style={{ backgroundColor: badgeBg, color: badgeColor, padding: '6px 10px', borderRadius: '8px', textAlign: 'center', minWidth: '50px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>{monthStr}</div>
+                  <div style={{ fontSize: '16px', fontWeight: '700', lineHeight: 1 }}>{dayStr}</div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: '600', color: '#1e293b', marginBottom: '2px', fontSize: '14px' }}>{visit.activity} with {visit.volunteerName.split(' ')[0]}</div>
+                  <div style={{ fontSize: '13px', color: '#64748b' }}>{visit.time} • {visit.location}</div>
+                </div>
+                <button 
+                  onClick={() => {
+                    // Find volunteer object to pass to calendar
+                    const vol = matches.find(m => m.id === visit.volunteerId) || { id: visit.volunteerId, name: visit.volunteerName };
+                    setSelectedVolunteerForSchedule(vol);
+                    setEditingVisitId(visit.id);
+                    setSchedulingStep('calendar');
+                  }}
+                  style={{ color: 'black', background: 'none', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
+                  Reschedule
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Profile View Component
   const ProfileView = () => (

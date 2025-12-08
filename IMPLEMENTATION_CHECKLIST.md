@@ -148,7 +148,7 @@ Track your progress as you build the app! Check off items as you complete them.
 - [ ] Implement `src/components/VolunteerComparison.jsx` (Optional - current card grid works well)
   - [ ] Props: volunteers (2-3), onSelect, selectedId
   - [ ] Side-by-side layout (responsive: stack on mobile)
-- [ ] Implement `src/components/SchedulingCalendar.jsx`
+- [x] Implement `src/components/SchedulingCalendar.jsx`
   - [ ] Props: volunteerId, volunteerName, onSchedule, availableSlots
   - [ ] Simple calendar/date picker (week view)
   - [ ] Large date buttons (min 50x50px)
