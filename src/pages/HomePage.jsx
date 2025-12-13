@@ -31,6 +31,7 @@ export default function HomePage() {
         }}>
           {user ? (
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              {/* TODO: Consider other design options for the Sign Out button (e.g. icon only, different placement) */}
               <Button 
                 variant="outline" 
                 size="small" 

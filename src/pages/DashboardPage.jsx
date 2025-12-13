@@ -375,7 +375,7 @@ export default function DashboardPage() {
             onMouseOver={(e) => e.target.style.backgroundColor = '#115e59'}
             onMouseOut={(e) => e.target.style.backgroundColor = '#0f766e'}
           >
-            Find My Perfect Match
+            Find a Volunteer
           </button>
         </div>
       )}
