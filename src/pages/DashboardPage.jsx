@@ -946,8 +946,9 @@ export default function DashboardPage() {
               </div>
               <div style={{ fontSize: '13px', color: '#555', lineHeight: '1.7' }}>
                 <div>{user.email || 'No email provided'}</div>
-                <div>{user.phone || 'No phone provided'}</div>
-                <div>{user.location || 'Location not specified'}</div>
+                {/* TODO: Add phone and location fields in future iteration */}
+                {/* <div>{user.phone || 'No phone provided'}</div> */}
+                {/* <div>{user.location || 'Location not specified'}</div> */}
               </div>
             </div>
 
