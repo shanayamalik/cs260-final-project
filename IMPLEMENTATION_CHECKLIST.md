@@ -19,7 +19,6 @@ Track your progress as you build the app! Check off items as you complete them.
 - [x] **Accessibility Setup:** 4-step wizard (Font Size, Theme, Input Method, Options) with live preview
 - [x] **Backend API:** Express server with user auth endpoints, persist to users.json
 - [x] **Signup Flow:** SignUp → Accessibility → Interview → Profile → Dashboard
-- [ ] **TODO:** User role selection (Volunteer/Senior/Both), backend preference endpoints
 
 ---
 
