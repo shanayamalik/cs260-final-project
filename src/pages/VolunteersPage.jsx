@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
 import VolunteerCard from '../components/VolunteerCard';
 import Button from '../components/common/Button';
+import ProfileMenu from '../components/ProfileMenu';
 import { mockVolunteers } from '../data/mockVolunteers';
 import { matchVolunteers, matchVolunteersSoft } from '../utils/matching';
 
@@ -196,6 +197,11 @@ export default function VolunteersPage() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#F7F9FC', paddingBottom: '2rem' }}>
       <Header title="Your Volunteer Matches" showHome />
+      
+      {/* Profile Menu in top right */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+        <ProfileMenu />
+      </div>
       
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1.5rem' }}>
         

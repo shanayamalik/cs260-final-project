@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
+import ProfileMenu from '../components/ProfileMenu';
 import { jsPDF } from "jspdf";
 
 export default function VoiceInterviewPage() {
@@ -17,9 +18,12 @@ export default function VoiceInterviewPage() {
   // Language options
   const languages = [
     { code: 'en-US', label: 'English', flag: '🇺🇸', greeting: "Hi! I'm here to help match you with the right volunteer. Tell me a little about what you enjoy doing." },
-    { code: 'es-ES', label: 'Español', flag: '🇪🇸', greeting: '¡Hola! Estoy aquí para ayudarte a encontrar el voluntario adecuado. Cuéntame un poco sobre lo que te gusta hacer.' },
-    { code: 'zh-CN', label: '中文', flag: '🇨🇳', greeting: '你好！我在这里帮助你找到合适的志愿者。告诉我你喜欢做什么。' },
-    { code: 'hi-IN', label: 'हिन्दी', flag: '🇮🇳', greeting: 'नमस्ते! मैं यहाँ आपको सही स्वयंसेवक से मिलाने में मदद करने के लिए हूँ। मुझे बताएं कि आप क्या करना पसंद करते हैं।' }
+    { code: 'es-ES', label: 'Spanish (Español)', flag: '🇪🇸', greeting: '¡Hola! Estoy aquí para ayudarte a encontrar el voluntario adecuado. Cuéntame un poco sobre lo que te gusta hacer.' },
+    { code: 'zh-CN', label: 'Chinese (中文)', flag: '🇨🇳', greeting: '你好！我在这里帮助你找到合适的志愿者。告诉我你喜欢做什么。' },
+    { code: 'hi-IN', label: 'Hindi (हिन्दी)', flag: '🇮🇳', greeting: 'नमस्ते! मैं यहाँ आपको सही स्वयंसेवक से मिलाने में मदद करने के लिए हूँ। मुझे बताएं कि आप क्या करना पसंद करते हैं।' },
+    { code: 'fr-FR', label: 'French (Français)', flag: '🇫🇷', greeting: 'Bonjour ! Je suis là pour vous aider à trouver le bon bénévole. Parlez-moi un peu de ce que vous aimez faire.' },
+    { code: 'pt-BR', label: 'Portuguese (Português)', flag: '🇧🇷', greeting: 'Olá! Estou aqui para ajudá-lo a encontrar o voluntário certo. Conte-me um pouco sobre o que você gosta de fazer.' },
+    { code: 'ja-JP', label: 'Japanese (日本語)', flag: '🇯🇵', greeting: 'こんにちは！適切なボランティアを見つけるお手伝いをします。あなたが楽しんでいることについて少し教えてください。' }
   ];
 
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
@@ -432,8 +436,11 @@ export default function VoiceInterviewPage() {
           </span>
         </div>
 
-        {/* Right: Language Selector + TTS Toggle */}
+        {/* Right: Profile Menu + Language Selector + TTS Toggle */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px' }}>
+          {/* Profile Menu */}
+          <ProfileMenu />
+          
           {/* Language Selector */}
           <div style={{ position: 'relative' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
+import ProfileMenu from '../components/ProfileMenu';
 import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
@@ -31,15 +32,7 @@ export default function HomePage() {
         }}>
           {user ? (
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              {/* TODO: Consider other design options for the Sign Out button (e.g. icon only, different placement) */}
-              <Button 
-                variant="outline" 
-                size="small" 
-                onClick={handleLogout}
-                style={{ fontSize: '13px', padding: '0.4rem 1rem', minHeight: '32px' }}
-              >
-                Sign Out
-              </Button>
+              <ProfileMenu userName={user.name} userEmail={user.email} />
             </div>
           ) : (
             <div style={{ display: 'flex', gap: '0.75rem' }}>

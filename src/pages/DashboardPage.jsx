@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VolunteerCard from '../components/VolunteerCard';
 import SchedulingCalendar from '../components/SchedulingCalendar';
+import ProfileMenu from '../components/ProfileMenu';
 import { mockVolunteers } from '../data/mockVolunteers';
 import { matchVolunteers } from '../utils/matching';
 
@@ -2017,6 +2018,11 @@ export default function DashboardPage() {
       {/* Main Content */}
       <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          {/* Profile Menu in top right */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
+            <ProfileMenu userName={user.name} userEmail={user.email} />
+          </div>
+          
           <WelcomeBanner />
           <StatsSection />
           

@@ -20,6 +20,7 @@ import CarrieLiveDemo from './pages/CarrieLiveDemo';
 import ProfileWithPreferencesDemo from './pages/ProfileWithPreferencesDemo';
 import AccessibilitySetupPage from './pages/AccessibilitySetupPage';
 import SchedulingCalendar from "./components/SchedulingCalendar";
+import ProfileMenuPreview from './pages/ProfileMenuPreview';
 import './styles/global.css';
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
           <Route path="/carrie-demo" element={<CarrieLiveDemo />} />
           <Route path="/preferences-demo" element={<ProfileWithPreferencesDemo />} />
           <Route path="/accessibility-setup" element={<AccessibilitySetupPage />} />
+          <Route path="/profile-menu-preview" element={<ProfileMenuPreview />} />
         </Routes>
       </div>
     </BrowserRouter>
