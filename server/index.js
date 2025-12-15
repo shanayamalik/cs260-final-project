@@ -113,10 +113,15 @@ app.post('/api/chat', async (req, res) => {
     return res.status(503).json({ message: 'AI service not configured (missing API key)' });
   }
 
-  const { messages } = req.body;
+  const { messages, language } = req.body;
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ message: 'Invalid messages format' });
   }
+
+  // Add language instruction to system prompt
+  const languageInstruction = language && language !== 'English' 
+    ? `\n\nIMPORTANT: Respond in ${language}. All your responses must be in ${language}.`
+    : '';
 
   try {
     const completion = await openai.chat.completions.create({
@@ -124,7 +129,7 @@ app.post('/api/chat', async (req, res) => {
       messages: [
         { 
           role: "system", 
-          content: INTERVIEW_SYSTEM_PROMPT 
+          content: INTERVIEW_SYSTEM_PROMPT + languageInstruction
         },
         ...messages
       ],

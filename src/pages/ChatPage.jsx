@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import Header from '../components/common/Header';
+import ProfileMenu from '../components/ProfileMenu';
 
 export default function ChatPage() {
   const { volunteerId } = useParams();
@@ -116,6 +117,11 @@ export default function ChatPage() {
   return (
     <div style={styles.container}>
       <Header title={`Chat with ${volunteer.name}`} showHome />
+
+      {/* Profile Menu in top right */}
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1.5rem', display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+        <ProfileMenu />
+      </div>
 
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '1.5rem' }}>
         

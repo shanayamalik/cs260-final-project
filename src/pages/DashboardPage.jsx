@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import VolunteerCard from '../components/VolunteerCard';
 import SchedulingCalendar from '../components/SchedulingCalendar';
+import ProfileMenu from '../components/ProfileMenu';
 import { mockVolunteers } from '../data/mockVolunteers';
 import { matchVolunteers } from '../utils/matching';
 
@@ -145,13 +146,14 @@ function ExtendedProfileModal({ volunteer, onClose }) {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   // Initialize user from localStorage to prevent flash of null/crash
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('user');
     return saved ? JSON.parse(saved) : null;
   });
   const [matches, setMatches] = useState([]);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'dashboard');
   const [profileVolunteer, setProfileVolunteer] = useState(null);
   
   // State for unread messages (persisted in localStorage for prototype)
@@ -178,6 +180,15 @@ export default function DashboardPage() {
     localStorage.removeItem('user');
     navigate('/login');
   };
+
+  // Handle navigation state changes (when coming from ProfileMenu)
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+      // Clear the state to prevent it from persisting
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   useEffect(() => {
     if (!user) {
@@ -453,34 +464,191 @@ export default function DashboardPage() {
   );
 
   // Matches View Component
-  const MatchesView = () => (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '20px', color: '#334155', fontWeight: '600', margin: 0 }}>Your Volunteer Matches</h2>
-      </div>
-      
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-        gap: '1.5rem' 
-      }}>
-        {matches.map(volunteer => (
-          <VolunteerCard
-            key={volunteer.id}
-            volunteer={volunteer}
-            onViewProfile={() => setProfileVolunteer(volunteer)}
-          />
-        ))}
-      </div>
-      
-      {matches.length === 0 && (
-        <div style={{ textAlign: 'center', color: '#666', padding: '3rem' }}>
-          <p style={{ fontSize: '48px', marginBottom: '1rem' }}>🔍</p>
-          <p>No volunteers found. Complete your profile to see matches!</p>
+  const MatchesView = () => {
+    const [selectedVolunteer, setSelectedVolunteer] = useState(null);
+    
+    return (
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '20px', color: '#334155', fontWeight: '600', margin: 0 }}>Your Volunteer Matches</h2>
         </div>
-      )}
-    </div>
-  );
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+          {matches.map(volunteer => (
+            <div key={volunteer.id} style={{
+              backgroundColor: 'white',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '1rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{
+                  fontSize: '42px',
+                  width: '56px',
+                  height: '56px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#f0fdfa',
+                  borderRadius: '10px',
+                  flexShrink: 0
+                }}>
+                  {volunteer.icon}
+                </div>
+                
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                    <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#1e293b', margin: 0 }}>{volunteer.name}</h3>
+                    {volunteer.verified && (
+                      <span style={{ fontSize: '10px', color: '#059669', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '3px', padding: '2px 5px', fontWeight: '500' }}>
+                        ✓
+                      </span>
+                    )}
+                  </div>
+                  <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>{volunteer.role}</p>
+                </div>
+              </div>
+              
+              <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.5', margin: 0 }}>
+                {volunteer.bio?.substring(0, 90)}...
+              </p>
+              
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                {volunteer.interests?.slice(0, 2).map((interest, idx) => (
+                  <span key={idx} style={{ fontSize: '10px', padding: '3px 7px', backgroundColor: '#f1f5f9', color: '#475569', borderRadius: '10px' }}>
+                    {interest}
+                  </span>
+                ))}
+                {volunteer.interests?.length > 2 && (
+                  <span style={{ fontSize: '10px', padding: '3px 7px', color: '#64748b' }}>
+                    +{volunteer.interests.length - 2}
+                  </span>
+                )}
+              </div>
+              
+              <button
+                onClick={() => setSelectedVolunteer(volunteer)}
+                style={{
+                  padding: '7px 12px',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  color: '#0d9488',
+                  backgroundColor: 'transparent',
+                  border: '1px solid #0d9488',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  marginTop: '4px'
+                }}
+              >
+                View Profile
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {matches.length === 0 && (
+          <div style={{ textAlign: 'center', color: '#666', padding: '3rem' }}>
+            <p style={{ fontSize: '48px', marginBottom: '1rem' }}>🔍</p>
+            <p>No volunteers found. Complete your profile to see matches!</p>
+          </div>
+        )}
+
+        {/* Modal */}
+        {selectedVolunteer && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '1rem'
+          }}
+          onClick={() => setSelectedVolunteer(null)}
+          >
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              maxWidth: '500px',
+              width: '100%'
+            }}
+            onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <div style={{
+                    fontSize: '48px',
+                    width: '64px',
+                    height: '64px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#f0fdfa',
+                    borderRadius: '12px'
+                  }}>
+                    {selectedVolunteer.icon}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b', margin: '0 0 4px 0' }}>{selectedVolunteer.name}</h3>
+                    <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>{selectedVolunteer.role}</p>
+                  </div>
+                </div>
+                <button onClick={() => setSelectedVolunteer(null)} style={{ background: 'none', border: 'none', fontSize: '24px', color: '#64748b', cursor: 'pointer', padding: 0 }}>×</button>
+              </div>
+              
+              <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>
+                {selectedVolunteer.bio}
+              </p>
+              
+              <div style={{ marginBottom: '1rem' }}>
+                <p style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', marginBottom: '6px' }}>Interests</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {selectedVolunteer.interests?.map((interest, idx) => (
+                    <span key={idx} style={{ fontSize: '11px', padding: '4px 9px', backgroundColor: '#f1f5f9', color: '#475569', borderRadius: '12px' }}>
+                      {interest}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: '1.5rem' }}>
+                <p style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', marginBottom: '6px' }}>Can help with</p>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {selectedVolunteer.helpsWith?.map((help, idx) => (
+                    <span key={idx} style={{ fontSize: '11px', padding: '4px 9px', backgroundColor: '#ecfdf5', color: '#059669', borderRadius: '12px', fontWeight: '500' }}>
+                      {help}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <button style={{
+                width: '100%',
+                padding: '10px',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: 'white',
+                backgroundColor: '#0d9488',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer'
+              }}>
+                Get in Touch
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Messages View Component
   const MessagesView = () => (
@@ -545,9 +713,19 @@ export default function DashboardPage() {
 
   // Schedule View Component
   const ScheduleView = () => {
-    const [schedulingStep, setSchedulingStep] = useState('list'); // 'list', 'select-volunteer', 'calendar'
+    const [schedulingStep, setSchedulingStep] = useState('list'); // 'list', 'select-volunteer', 'calendar', 'edit-details'
     const [selectedVolunteerForSchedule, setSelectedVolunteerForSchedule] = useState(null);
     const [editingVisitId, setEditingVisitId] = useState(null);
+    const [editingVisit, setEditingVisit] = useState(null);
+    const [showNewVisitModal, setShowNewVisitModal] = useState(false);
+    const [newVisitData, setNewVisitData] = useState({
+      volunteerId: matches[0]?.id || '',
+      volunteerName: matches[0]?.name || '',
+      activity: 'Coffee & Chat',
+      location: 'Zoom',
+      date: '',
+      time: '10:00 AM'
+    });
 
     // Mock initial visits
     const [visits, setVisits] = useState([
@@ -579,6 +757,7 @@ export default function DashboardPage() {
         setSchedulingStep('list');
         setSelectedVolunteerForSchedule(null);
         setEditingVisitId(null);
+        setEditingVisit(null);
       }
     }, [activeTab]);
 
@@ -611,6 +790,432 @@ export default function DashboardPage() {
       setSchedulingStep('list');
       setSelectedVolunteerForSchedule(null);
       setEditingVisitId(null);
+      setEditingVisit(null);
+    };
+
+    const handleSaveVisitDetails = () => {
+      if (!editingVisit) return;
+      
+      setVisits(prev => prev.map(v => {
+        if (v.id === editingVisit.id) {
+          return editingVisit;
+        }
+        return v;
+      }));
+      
+      alert('Visit details updated successfully!');
+      setSchedulingStep('list');
+      setEditingVisit(null);
+      setEditingVisitId(null);
+    };
+
+    const handleSaveNewVisit = () => {
+      if (!newVisitData.date) {
+        alert('Please select a date');
+        return;
+      }
+      
+      const newVisit = {
+        id: Date.now(),
+        ...newVisitData,
+        color: 'blue'
+      };
+      
+      setVisits(prev => [...prev, newVisit]);
+      alert(`Scheduled successfully with ${newVisitData.volunteerName} for ${newVisitData.date} at ${newVisitData.time}!`);
+      
+      setShowNewVisitModal(false);
+      setNewVisitData({
+        volunteerId: matches[0]?.id || '',
+        volunteerName: matches[0]?.name || '',
+        activity: 'Coffee & Chat',
+        location: 'Zoom',
+        date: '',
+        time: '10:00 AM'
+      });
+    };
+
+    const handleDeleteVisit = (visitId) => {
+      if (confirm('Are you sure you want to delete this visit?')) {
+        setVisits(prev => prev.filter(v => v.id !== visitId));
+        setSchedulingStep('list');
+        setEditingVisit(null);
+        setEditingVisitId(null);
+      }
+    };
+
+    // State for custom location input
+    const [showCustomLocation, setShowCustomLocation] = useState(false);
+    const [customLocation, setCustomLocation] = useState('');
+
+    // Dropdown options for scheduling
+    const activityOptions = [
+      'Coffee & Chat',
+      'Walk in the Park',
+      'Board Game',
+      'Arts & Crafts',
+      'Reading Together',
+      'Grocery Shopping',
+      'Virtual Call',
+      'Cooking Together'
+    ];
+
+    const virtualLocationOptions = [
+      'Zoom',
+      'Phone Call',
+      'FaceTime',
+      'Google Meet',
+      'WhatsApp Video',
+      'In-Person'
+    ];
+
+    const timeOptions = [
+      '9:00 AM',
+      '10:00 AM',
+      '11:00 AM',
+      '12:00 PM',
+      '1:00 PM',
+      '2:00 PM',
+      '3:00 PM',
+      '4:00 PM',
+      '5:00 PM'
+    ];
+
+    // Render new visit modal
+    const renderNewVisitModal = () => {
+      if (!showNewVisitModal) return null;
+
+      return (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '1rem'
+        }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '1.5rem', maxWidth: '700px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b', margin: 0 }}>
+                Schedule New Visit
+              </h3>
+              <button
+                onClick={() => setShowNewVisitModal(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '24px', color: '#64748b', padding: '0', lineHeight: 1 }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem 1.5rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Volunteer</label>
+                <select
+                  value={newVisitData.volunteerId}
+                  onChange={(e) => {
+                    const selectedVol = matches.find(m => m.id === e.target.value);
+                    setNewVisitData({ ...newVisitData, volunteerId: e.target.value, volunteerName: selectedVol?.name || '' });
+                  }}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer' }}
+                >
+                  {matches.map(vol => (
+                    <option key={vol.id} value={vol.id}>{vol.name}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Activity</label>
+                <select
+                  value={newVisitData.activity}
+                  onChange={(e) => setNewVisitData({ ...newVisitData, activity: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer' }}
+                >
+                  {activityOptions.map(act => (
+                    <option key={act} value={act}>{act}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Meeting Type</label>
+                <select
+                  value={showCustomLocation ? 'custom' : newVisitData.location}
+                  onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                      setShowCustomLocation(true);
+                    } else {
+                      setShowCustomLocation(false);
+                      setNewVisitData({ ...newVisitData, location: e.target.value });
+                    }
+                  }}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer' }}
+                >
+                  {virtualLocationOptions.map(loc => (
+                    <option key={loc} value={loc}>{loc}</option>
+                  ))}
+                  <option value="custom">Custom location...</option>
+                </select>
+                {showCustomLocation && (
+                  <input
+                    type="text"
+                    value={customLocation}
+                    onChange={(e) => {
+                      setCustomLocation(e.target.value);
+                      setNewVisitData({ ...newVisitData, location: e.target.value });
+                    }}
+                    placeholder="Enter specific location or meeting link"
+                    style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', marginTop: '8px' }}
+                  />
+                )}
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Date</label>
+                <input
+                  type="date"
+                  value={newVisitData.date}
+                  onChange={(e) => setNewVisitData({ ...newVisitData, date: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px' }}
+                />
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Time</label>
+                <select
+                  value={newVisitData.time}
+                  onChange={(e) => setNewVisitData({ ...newVisitData, time: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer' }}
+                >
+                  {timeOptions.map(time => (
+                    <option key={time} value={time}>{time}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowNewVisitModal(false)}
+                style={{
+                  padding: '8px 14px',
+                  backgroundColor: 'transparent',
+                  color: '#64748b',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveNewVisit}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#0d9488',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+              >
+                Schedule Visit
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Render edit modal as overlay instead of replacing the view
+    const renderEditModal = () => {
+      if (!editingVisit) return null;
+
+      return (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '1rem'
+        }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '1.5rem', maxWidth: '700px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b', margin: 0 }}>
+                Edit Visit
+              </h3>
+              <button
+                onClick={() => {
+                  setEditingVisit(null);
+                  setEditingVisitId(null);
+                  setShowCustomLocation(false);
+                  setCustomLocation('');
+                }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '24px', color: '#64748b', padding: '0', lineHeight: 1 }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem 1.5rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Volunteer</label>
+                <div style={{
+                  width: '100%',
+                  padding: '8px 10px',
+                  backgroundColor: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  color: '#64748b'
+                }}>
+                  {editingVisit.volunteerName}
+                </div>
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Activity</label>
+                <select
+                  value={editingVisit.activity}
+                  onChange={(e) => setEditingVisit({ ...editingVisit, activity: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer' }}
+                >
+                  {activityOptions.map(act => (
+                    <option key={act} value={act}>{act}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Meeting Type</label>
+                <select
+                  value={showCustomLocation ? 'custom' : editingVisit.location}
+                  onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                      setShowCustomLocation(true);
+                    } else {
+                      setShowCustomLocation(false);
+                      setEditingVisit({ ...editingVisit, location: e.target.value });
+                    }
+                  }}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer' }}
+                >
+                  {virtualLocationOptions.map(loc => (
+                    <option key={loc} value={loc}>{loc}</option>
+                  ))}
+                  <option value="custom">Custom location...</option>
+                </select>
+                {showCustomLocation && (
+                  <input
+                    type="text"
+                    value={customLocation}
+                    onChange={(e) => {
+                      setCustomLocation(e.target.value);
+                      setEditingVisit({ ...editingVisit, location: e.target.value });
+                    }}
+                    placeholder="Enter specific location or meeting link"
+                    style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', marginTop: '8px' }}
+                  />
+                )}
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Date</label>
+                <input
+                  type="date"
+                  value={editingVisit.date}
+                  onChange={(e) => setEditingVisit({ ...editingVisit, date: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px' }}
+                />
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Time</label>
+                <select
+                  value={editingVisit.time}
+                  onChange={(e) => setEditingVisit({ ...editingVisit, time: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer' }}
+                >
+                  {timeOptions.map(time => (
+                    <option key={time} value={time}>{time}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => {
+                  setEditingVisit(null);
+                  setEditingVisitId(null);
+                  setShowCustomLocation(false);
+                  setCustomLocation('');
+                }}
+                style={{
+                  padding: '8px 14px',
+                  backgroundColor: 'transparent',
+                  color: '#64748b',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveVisitDetails}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#0d9488',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+              >
+                Save
+              </button>
+            </div>
+            
+            <button
+              onClick={() => handleDeleteVisit(editingVisit.id)}
+              style={{
+                width: '100%',
+                marginTop: '12px',
+                padding: '10px',
+                backgroundColor: 'transparent',
+                color: '#dc2626',
+                border: 'none',
+                fontSize: '13px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                textDecoration: 'underline'
+              }}
+            >
+              Delete this visit
+            </button>
+          </div>
+        </div>
+      );
     };
 
     if (schedulingStep === 'calendar' && selectedVolunteerForSchedule) {
@@ -627,48 +1232,12 @@ export default function DashboardPage() {
       );
     }
 
-    if (schedulingStep === 'select-volunteer') {
-      return (
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
-            <button
-              onClick={() => setSchedulingStep('list')}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#64748b', display: 'flex', alignItems: 'center'
-              }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
-            <h2 style={{ fontSize: '20px', color: '#334155', fontWeight: '600', margin: 0 }}>Select a Volunteer</h2>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-            {matches.map(volunteer => (
-              <div key={volunteer.id} onClick={() => {
-                setSelectedVolunteerForSchedule(volunteer);
-                setEditingVisitId(null); // Ensure we are in "create" mode
-                setSchedulingStep('calendar');
-              }}>
-                <VolunteerCard volunteer={volunteer} />
-              </div>
-            ))}
-            {matches.length === 0 && (
-              <p style={{ color: '#64748b' }}>No matches found yet. Check your matches tab!</p>
-            )}
-          </div>
-        </div>
-      );
-    }
-
     return (
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '20px', color: '#334155', fontWeight: '600', margin: 0 }}>Upcoming Visits</h2>
           <button 
-            onClick={() => {
-              setEditingVisitId(null);
-              setSchedulingStep('select-volunteer');
-            }}
+            onClick={() => setShowNewVisitModal(true)}
             style={{ backgroundColor: '#0d9488', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', fontSize: '13px' }}>
             + Schedule New
           </button>
@@ -706,19 +1275,37 @@ export default function DashboardPage() {
                 </div>
                 <button 
                   onClick={() => {
-                    // Find volunteer object to pass to calendar
-                    const vol = matches.find(m => m.id === visit.volunteerId) || { id: visit.volunteerId, name: visit.volunteerName };
-                    setSelectedVolunteerForSchedule(vol);
+                    setEditingVisit({ ...visit });
                     setEditingVisitId(visit.id);
-                    setSchedulingStep('calendar');
                   }}
-                  style={{ color: 'black', background: 'none', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
-                  Reschedule
+                  style={{ 
+                    color: '#0d9488', 
+                    background: 'none', 
+                    border: '1px solid #0d9488', 
+                    padding: '4px 10px', 
+                    borderRadius: '6px', 
+                    cursor: 'pointer', 
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0d9488';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#0d9488';
+                  }}
+                >
+                  Edit
                 </button>
               </div>
             );
           })}
         </div>
+        {renderNewVisitModal()}
+        {renderEditModal()}
       </div>
     );
   };
@@ -1441,6 +2028,11 @@ export default function DashboardPage() {
       {/* Main Content */}
       <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          {/* Profile Menu in top right */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
+            <ProfileMenu userName={user.name} userEmail={user.email} />
+          </div>
+          
           <WelcomeBanner />
           <StatsSection />
           

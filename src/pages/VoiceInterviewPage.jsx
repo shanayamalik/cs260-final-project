@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
+import ProfileMenu from '../components/ProfileMenu';
 import { jsPDF } from "jspdf";
 
 export default function VoiceInterviewPage() {
@@ -14,9 +15,23 @@ export default function VoiceInterviewPage() {
     }
   }, []);
   
-  // Mock state
+  // Language options
+  const languages = [
+    { code: 'en-US', label: 'English', flag: '🇺🇸', greeting: "Hi! I'm here to help match you with the right volunteer. Tell me a little about what you enjoy doing." },
+    { code: 'es-ES', label: 'Spanish (Español)', flag: '🇪🇸', greeting: '¡Hola! Estoy aquí para ayudarte a encontrar el voluntario adecuado. Cuéntame un poco sobre lo que te gusta hacer.' },
+    { code: 'zh-CN', label: 'Chinese (中文)', flag: '🇨🇳', greeting: '你好！我在这里帮助你找到合适的志愿者。告诉我你喜欢做什么。' },
+    { code: 'hi-IN', label: 'Hindi (हिन्दी)', flag: '🇮🇳', greeting: 'नमस्ते! मैं यहाँ आपको सही स्वयंसेवक से मिलाने में मदद करने के लिए हूँ। मुझे बताएं कि आप क्या करना पसंद करते हैं।' },
+    { code: 'fr-FR', label: 'French (Français)', flag: '🇫🇷', greeting: 'Bonjour ! Je suis là pour vous aider à trouver le bon bénévole. Parlez-moi un peu de ce que vous aimez faire.' },
+    { code: 'pt-BR', label: 'Portuguese (Português)', flag: '🇧🇷', greeting: 'Olá! Estou aqui para ajudá-lo a encontrar o voluntário certo. Conte-me um pouco sobre o que você gosta de fazer.' },
+    { code: 'ja-JP', label: 'Japanese (日本語)', flag: '🇯🇵', greeting: 'こんにちは！適切なボランティアを見つけるお手伝いをします。あなたが楽しんでいることについて少し教えてください。' }
+  ];
+
+  const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(true);
+  
+  // Mock state - Initialize with greeting
   const [transcript, setTranscript] = useState([
-    { text: "Hi! I'm here to help match you with the right volunteer. Tell me a little about what you enjoy doing.", speaker: 'ai', timestamp: new Date().toISOString() }
+    { text: languages[0].greeting, speaker: 'ai', timestamp: new Date().toISOString() }
   ]);
   const [interimText, setInterimText] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -41,7 +56,7 @@ export default function VoiceInterviewPage() {
     window.speechSynthesis.cancel();
   
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';   // or 'zh-CN' if you later support Chinese
+    utterance.lang = selectedLanguage.code;
     utterance.rate = 0.92;       // speaking rate
     utterance.pitch = 1.2;      // voice pitch
     utterance.volume = 0.9;
@@ -134,7 +149,7 @@ export default function VoiceInterviewPage() {
           const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: apiMessages })
+            body: JSON.stringify({ messages: apiMessages, language: selectedLanguage.label })
           });
   
           if (!response.ok) {
@@ -220,13 +235,22 @@ export default function VoiceInterviewPage() {
   // Real Speech Recognition Logic
   const recognitionRef = useRef(null);
 
+  // Start interview with selected language
+  const startInterview = () => {
+    setShowLanguageSelector(false);
+    setTranscript([{ text: selectedLanguage.greeting, speaker: 'ai', timestamp: new Date().toISOString() }]);
+    if (ttsEnabled) {
+      speakText(selectedLanguage.greeting);
+    }
+  };
+
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = 'en-US';
+      recognition.lang = selectedLanguage.code;
 
       recognition.onresult = (event) => {
         let fullTranscript = '';
@@ -347,10 +371,8 @@ export default function VoiceInterviewPage() {
   const speakGreetingOnce = () => {
     if (!ttsGreetingSpoken && typeof window !== 'undefined' && 'speechSynthesis' in window && ttsEnabled) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(
-        "Hi! I'm here to help match you with the right volunteer. Tell me a little about what you enjoy doing."
-      );
-      utterance.lang = 'en-US';
+      const utterance = new SpeechSynthesisUtterance(selectedLanguage.greeting);
+      utterance.lang = selectedLanguage.code;
       utterance.rate = 0.92;
       utterance.pitch = 1.2;
       utterance.volume = 0.9;
@@ -414,8 +436,94 @@ export default function VoiceInterviewPage() {
           </span>
         </div>
 
-        {/* Right: TTS Toggle */}
+        {/* Right: Profile Menu + Language Selector + TTS Toggle */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px' }}>
+          {/* Profile Menu */}
+          <ProfileMenu />
+          
+          {/* Language Selector */}
+          <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>
+                Language:
+              </span>
+              <select
+                value={selectedLanguage.code}
+                onChange={(e) => {
+                  const lang = languages.find(l => l.code === e.target.value);
+                  setSelectedLanguage(lang);
+                  setShowLanguageSelector(false);
+                  // Update transcript with new greeting if empty
+                  if (transcript.length === 0) {
+                    setTranscript([{ text: lang.greeting, speaker: 'ai', timestamp: new Date().toISOString() }]);
+                  }
+                }}
+                style={{
+                  padding: '6px 28px 6px 10px',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  backgroundColor: 'white',
+                  color: '#1e293b',
+                  cursor: 'pointer'
+                }}
+              >
+                {languages.map(lang => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.flag} {lang.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Tooltip */}
+            {showLanguageSelector && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                right: 0,
+                marginTop: '8px',
+                padding: '10px 12px',
+                backgroundColor: '#1e293b',
+                color: 'white',
+                borderRadius: '8px',
+                fontSize: '11px',
+                width: '220px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 10
+              }}>
+                <button
+                  onClick={() => setShowLanguageSelector(false)}
+                  style={{
+                    position: 'absolute',
+                    top: '4px',
+                    right: '4px',
+                    background: 'none',
+                    border: 'none',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    padding: '2px'
+                  }}
+                >
+                  ×
+                </button>
+                <p style={{ margin: 0, lineHeight: '1.4', paddingRight: '16px' }}>
+                  💡 English is the default, but you can change to any language that's easier for you to speak.
+                </p>
+                <div style={{
+                  position: 'absolute',
+                  top: '-5px',
+                  right: '20px',
+                  width: '10px',
+                  height: '10px',
+                  backgroundColor: '#1e293b',
+                  transform: 'rotate(45deg)'
+                }} />
+              </div>
+            )}
+          </div>
           {/* TTS Toggle Button */}
           <div style={{ position: 'relative' }}>
             <button
@@ -733,6 +841,7 @@ export default function VoiceInterviewPage() {
           </button>
         </div>
       )}
+
     </div>
   );
 }
