@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function HelpCenterPreview() {
-  const [selectedOption, setSelectedOption] = useState('A');
+  const [activeCategory, setActiveCategory] = useState(0);
+  const [openQuestion, setOpenQuestion] = useState(null);
   const navigate = useNavigate();
 
   // Sample FAQ data
@@ -69,15 +70,7 @@ function HelpCenterPreview() {
     }
   ];
 
-  const guides = [
-    { icon: '🎤', title: 'Voice Interview Guide', desc: 'Learn how to complete your profile using our AI assistant' },
-    { icon: '📅', title: 'Scheduling Visits', desc: 'Step-by-step guide to booking and managing visits' },
-    { icon: '💬', title: 'Messaging Tips', desc: 'How to stay connected with your volunteers' },
-    { icon: '⚙️', title: 'Customizing Settings', desc: 'Personalize your experience with accessibility options' }
-  ];
-
-  // Option A: Traditional FAQ with Expandable Sections
-  const OptionA = () => {
+  return (
     const [expandedCategory, setExpandedCategory] = useState(0);
     const [expandedQuestion, setExpandedQuestion] = useState(null);
 
@@ -807,50 +800,162 @@ function HelpCenterPreview() {
   };
 
   return (
-    <div>
-      {/* Option Selector */}
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#fafbfc' }}>
+      {/* Compact Sidebar */}
       <div style={{
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        zIndex: 1000,
+        width: '260px',
         backgroundColor: 'white',
-        padding: '0.75rem',
-        borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        border: '1px solid #e2e8f0'
+        borderRight: '1px solid #e5e7eb',
+        padding: '1.5rem 1rem',
+        overflowY: 'auto'
       }}>
-        <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748b', marginBottom: '0.5rem' }}>
-          Preview Options
-        </div>
-        <div style={{ display: 'flex', gap: '0.4rem' }}>
-          {['A', 'B', 'C', 'D', 'E'].map(option => (
+        <button
+          onClick={() => navigate('/dashboard')}
+          style={{
+            padding: '6px 10px',
+            backgroundColor: 'transparent',
+            border: '1px solid #e2e8f0',
+            borderRadius: '6px',
+            color: '#64748b',
+            fontSize: '12px',
+            cursor: 'pointer',
+            marginBottom: '1.5rem',
+            width: '100%',
+            fontWeight: '500'
+          }}
+        >
+          ← Back
+        </button>
+
+        <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a', marginBottom: '1rem' }}>
+          Help Center
+        </h2>
+
+        <nav>
+          {faqs.map((section, idx) => (
             <button
-              key={option}
-              onClick={() => setSelectedOption(option)}
+              key={idx}
+              onClick={() => {
+                setActiveCategory(idx);
+                setOpenQuestion(null);
+              }}
               style={{
-                padding: '6px 10px',
-                border: selectedOption === option ? '2px solid #0d9488' : '1px solid #e2e8f0',
+                width: '100%',
+                padding: '8px 12px',
+                textAlign: 'left',
+                border: 'none',
                 borderRadius: '6px',
-                backgroundColor: selectedOption === option ? '#e0f2f1' : 'white',
-                color: selectedOption === option ? '#0d9488' : '#64748b',
-                fontWeight: '600',
+                backgroundColor: activeCategory === idx ? '#e0f2f1' : 'transparent',
+                color: activeCategory === idx ? '#0d9488' : '#64748b',
+                fontWeight: activeCategory === idx ? '600' : '500',
                 fontSize: '13px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                marginBottom: '4px',
+                transition: 'all 0.15s'
               }}
             >
-              {option}
+              {section.category}
             </button>
           ))}
+        </nav>
+
+        <div style={{
+          marginTop: '1.5rem',
+          padding: '12px',
+          backgroundColor: '#f8fafc',
+          borderRadius: '8px'
+        }}>
+          <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px' }}>
+            Need more help?
+          </p>
+          <button style={{
+            width: '100%',
+            padding: '8px',
+            backgroundColor: '#0d9488',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            fontSize: '12px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}>
+            Contact Support
+          </button>
         </div>
       </div>
 
-      {/* Render selected option */}
-      {selectedOption === 'A' && <OptionA />}
-      {selectedOption === 'B' && <OptionB />}
-      {selectedOption === 'C' && <OptionC />}
-      {selectedOption === 'D' && <OptionD />}
-      {selectedOption === 'E' && <OptionE />}
+      {/* Content Area - Minimal Accordion */}
+      <div style={{ flex: 1, padding: '1.5rem 2rem', overflowY: 'auto' }}>
+        <div style={{ maxWidth: '680px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: '600', color: '#0f172a', marginBottom: '0.5rem' }}>
+            {faqs[activeCategory].category}
+          </h1>
+          <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '1.5rem' }}>
+            Common questions about {faqs[activeCategory].category.toLowerCase()}
+          </p>
+
+          {/* Minimal accordion list */}
+          <div>
+            {faqs[activeCategory].questions.map((item, qIdx) => {
+              const isOpen = openQuestion === `${activeCategory}-${qIdx}`;
+              return (
+                <div
+                  key={qIdx}
+                  style={{
+                    borderBottom: '1px solid #f1f5f9',
+                    paddingBottom: '12px',
+                    marginBottom: '12px'
+                  }}
+                >
+                  <button
+                    onClick={() => setOpenQuestion(isOpen ? null : `${activeCategory}-${qIdx}`)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 0',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      border: 'none',
+                      background: 'none',
+                      cursor: 'pointer',
+                      textAlign: 'left'
+                    }}
+                  >
+                    <span style={{ fontSize: '15px', fontWeight: '600', color: '#1e293b', paddingRight: '1rem' }}>
+                      {item.q}
+                    </span>
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#0d9488"
+                      strokeWidth="2"
+                      style={{
+                        flexShrink: 0,
+                        transition: 'transform 0.2s',
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                      }}
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  {isOpen && (
+                    <div style={{
+                      padding: '8px 0',
+                      fontSize: '14px',
+                      lineHeight: '1.6',
+                      color: '#64748b'
+                    }}>
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
