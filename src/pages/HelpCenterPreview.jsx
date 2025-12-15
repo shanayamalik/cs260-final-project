@@ -208,19 +208,32 @@ function HelpCenterPreview() {
             Still need help?
           </h3>
           <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '1.5rem' }}>
-            Our support team is here to assist you
+            Chat with our AI-powered Community Support for personalized assistance
           </p>
-          <button style={{
-            padding: '12px 24px',
-            backgroundColor: '#0d9488',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}>
-            Contact Support
+          <button 
+            onClick={() => navigate('/chat/support', { 
+              state: { 
+                volunteer: { 
+                  id: 'support', 
+                  name: 'Community Support', 
+                  avatar: '🤝', 
+                  role: 'Support Assistant',
+                  interests: ['Help & Support', 'Technical Assistance', 'Guidance']
+                } 
+              } 
+            })}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#0d9488',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
+          >
+            Chat with Support
           </button>
         </div>
       </div>
