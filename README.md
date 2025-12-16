@@ -2,7 +2,18 @@
 
 **Connecting seniors with volunteer companions for meaningful relationships and support.**
 
-SilverLink is a web application that helps older adults find and connect with volunteers for companionship, assistance with daily activities, and social engagement. The platform features an AI-powered voice interview, smart matching algorithm, and accessible dashboard.
+## About
+
+SilverLink is a web application designed to bridge the gap between older adults seeking companionship and volunteers willing to help. The platform addresses the challenge of social isolation among seniors by providing an accessible, voice-first interface that removes barriers to technology adoption.
+
+**Why this project?** Many seniors struggle with complex interfaces and small text, making traditional volunteer-matching platforms inaccessible. SilverLink uses voice interaction and AI to create a natural, conversational onboarding experience that feels less like filling out forms and more like talking to a friend.
+
+**Key technologies chosen:**
+- **Web Speech API** - Enables voice interaction without requiring downloads or special hardware
+- **OpenAI GPT-3.5** - Powers natural conversation flow and intelligent profile generation
+- **React + Vite** - Fast development and modern component architecture for maintainability
+- **Express.js** - Lightweight backend suitable for rapid prototyping and API integration
+- **CSS Variables** - Dynamic theming system for accessibility features (font size, contrast)
 
 ---
 
@@ -100,20 +111,33 @@ cs260-final-project/
 
 ---
 
-## 🔄 User Flow
+## 🔄 How to Use
 
-1. **Sign Up** - Create account with security question for password recovery
-2. **Voice Interview** - Complete AI-guided conversation about preferences and needs
-3. **Review Preferences** - Customize generated profile from interview
-4. **Dashboard** - Access profile, volunteer matches, messages, and schedule
-5. **Browse & Schedule** - Explore volunteer matches and book visits
+### First-Time Users
+1. **Sign Up** - Create an account with your name, email, and a security question
+2. **Voice Interview** - Click "Start Interview" and have a natural conversation with the AI (or type if you prefer)
+3. **Review Profile** - Check the auto-generated profile and edit any preferences
+4. **Explore Matches** - Browse volunteers matched to your interests and availability
+5. **Schedule Visits** - Book video calls, phone chats, or in-person meetings
 
----
+### Test Credentials
+No 🚧 Challenges & Future Improvements
 
-## ⚠️ Known Limitations
-
+**Current Limitations:**
 - Uses mock volunteer data (not real profiles)
 - Browser localStorage for user preferences (not persistent across devices)
+- File-based backend (`users.json`) instead of database
+- Basic authentication (no JWT/OAuth)
+- Simulated messaging (not real-time)
+- Relies on browser Speech API (limited browser support)
+
+**Planned Enhancements:**
+- Database integration (PostgreSQL) for persistent data
+- Real-time messaging with WebSockets
+- Volunteer registration and verification system
+- Mobile app for iOS/Android
+- Video call integration
+- Calendar sync (Google Calendar, iCaltent across devices)
 - File-based backend (\`users.json\`) instead of database
 - Basic authentication (no JWT/OAuth)
 - Simulated messaging (not real-time)
@@ -124,17 +148,35 @@ cs260-final-project/
 ## 🧪 Development Commands
 
 \`\`\`bash
-npm run dev      # Start frontend development server
-npm run server   # Start backend server
-npm run build    # Build for production
-npm test         # Run tests
-npm run lint     # Lint code
-\`\`\`
+npm👥 Credits
+
+**Developers**: Shanaya Malik, Carrie Wan, Minghui Wang  
+**Course**: CS 260 - Web Development  
+**Institution**: University of California, Berkeley
+
+**Special Thanks:**
+- OpenAI for GPT-3.5 API access
+- BYU CS Department for project guidance
+- Mock volunteer profiles inspired by real senior care programs
 
 ---
 
-## 🎓 Academic Context
+## 📝 License
 
+Academic project - not licensed for commercial use.
+
+---
+
+## 🎓 Learning Outcomes
+
+This project demonstrates:
+- Full-stack web development with React and Express
+- RESTful API design and implementation
+- Third-party API integration (OpenAI)
+- Accessibility-first design principles (WCAG 2.1 AA)
+- Voice user interface implementation
+- Client-side routing and state management
+- File-based data persistence for prototyping
 **CS 260 Final Project** - Brigham Young University
 
 This project demonstrates full-stack web development with React/Express, RESTful API design, OpenAI integration, accessibility-first design, voice user interfaces, and client-side routing.

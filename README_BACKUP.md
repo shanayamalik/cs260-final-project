@@ -267,9 +267,9 @@ This project is for educational purposes as part of CS 260.
 
 ## 👥 Credits
 
-**Developer**: Shanaya Malik  
+**Developers**: Shanaya Malik, Carrie Wan, Minghui Wang  
 **Course**: CS 260 - Web Development  
-**Institution**: [Your University]  
+**Institution**: University of California, Berkeley
 
 ### Acknowledgments
 - OpenAI for GPT API
